@@ -1,38 +1,14 @@
 #ifndef DATACONTEXT_H
 #define DATACONTEXT_H
 
-#include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "lib/list.h"
 #include "lib/dict.h"
-
-typedef enum
-{
-    ITEMDATATYPE_STRING,
-    ITEMDATATYPE_FUNC,
-    ITEMDATATYPE_OBJECT,
-} DcItemType;
-
-typedef struct _dataContext
-{
-    Dict dict;
-} DataContext;
-
-typedef void (*CommandFn)(DataContext*);
-
-typedef struct _dataContextItem
-{
-    char *szKey;
-    char *pData;
-    size_t iDataSize;
-    //void (*fnCommand)(DataContext*);
-    CommandFn fnCommand;
-    DcItemType eDataType;
-    SList observers;
-} DcItem;
+#include "ngf.h"
 
 DataContext* create_datacontext();
+DataContext* create_dc_ex(EventHandler *pEvtHandler);
 void free_datacontext(DataContext *pDc);
 
 void DataContext_add_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen);
@@ -46,6 +22,7 @@ size_t DataContext_get_str(DataContext *pDc, char *szKey, char **szStr);
 char* DataContext_get_object(DataContext *pDc, char *szKey);
 
 void DataContext_update(DataContext *pDc, char *szKey);
-void DataContext_observe(DataContext *pDc, char *szKey, HWND hWnd);
+//void DataContext_observe(DataContext *pDc, char *szKey, HWND hWnd);
+void DataContext_observe(DataContext *pDc, char *szKey, char *pObserver, size_t iObserverSize);
 
 #endif

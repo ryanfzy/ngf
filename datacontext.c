@@ -1,12 +1,17 @@
 #include "datacontext.h"
-#include "messages.h"
-#include <windows.h>
 #include <string.h>
 
 DataContext* create_datacontext()
 {
     DataContext *pDc = malloc(sizeof(DataContext));
     dict_init(&(pDc->dict));
+    return pDc;
+}
+
+DataContext* create_dc_ex(EventHandler *pEvtHandler)
+{
+    DataContext *pDc = create_datacontext();
+    pDc->pEvtHandler = pEvtHandler;
     return pDc;
 }
 
@@ -124,22 +129,26 @@ void DataContext_update(DataContext *pDc, char *szKey)
         {
             for (int i = 0; i < slist_get_count(&(pItem->observers)); i++)
             {
-                HWND *phWnd = (HWND*)slist_get(&(pItem->observers), i);
-                if (phWnd != NULL)
-                    InvalidateRect(*phWnd, NULL, TRUE);
-                    //SendMessage(*phWnd, ZXAML_UPDATE, 0, 0);
+                char *pObserver = slist_get(&(pItem->observers), i);
+                if (pObserver != NULL && pDc->pEvtHandler != NULL)
+                {
+                    Event evt;
+                    evt.pObserver = pObserver;
+                    evt.eEvtType = EVENTTYPE_UPDATE;
+                    pDc->pEvtHandler->fnRaiseEvent(&evt);
+                }
             }
         }
     }
 }
 
-void DataContext_observe(DataContext *pDc, char *szKey, HWND hWnd)
+void DataContext_observe(DataContext *pDc, char *szKey, char *pObserver, size_t iObserverSize)
 {
     if (dict_contains(&(pDc->dict), szKey))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
-            slist_push(&(pItem->observers), (char*)&hWnd, sizeof(HWND));
+            slist_push(&(pItem->observers), pObserver, iObserverSize);
     }
 }
 
