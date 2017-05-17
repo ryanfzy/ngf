@@ -1,6 +1,8 @@
 #include "datacontext.h"
 #include <string.h>
 
+#define SIZEOF(x) (x), strlen((x))
+
 DataContext* create_datacontext()
 {
     DataContext *pDc = malloc(sizeof(DataContext));
@@ -40,8 +42,8 @@ static void InitDcItem(DcItem *pDcItem, DcItemType eType, char *szKey, char *pDa
 
 static DcItem* DataContext_get_item(DataContext *pDc, char *szKey)
 {
-    if (dict_contains(&(pDc->dict), szKey))
-        return (DcItem*)dict_get(&(pDc->dict), szKey);
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
+        return (DcItem*)dict_get(&(pDc->dict), SIZEOF(szKey));
     return NULL;
 }
 
@@ -51,7 +53,7 @@ void DataContext_add_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen
     InitDcItem(&item, ITEMDATATYPE_STRING, szKey, szStr, iLen+1);
     item.pData[iLen] = '\0';
 
-    dict_add(&(pDc->dict), szKey, (char*)&item, sizeof(DcItem));
+    dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
 
 void DataContext_add_object(DataContext *pDc, char *szKey, char *pData, size_t iSize)
@@ -59,7 +61,7 @@ void DataContext_add_object(DataContext *pDc, char *szKey, char *pData, size_t i
     DcItem item;
     InitDcItem(&item, ITEMDATATYPE_OBJECT, szKey, pData, iSize);
 
-    dict_add(&(pDc->dict), szKey, (char*)&item, sizeof(DcItem));
+    dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
 
 char* DataContext_get_object(DataContext *pDc, char *szKey)
@@ -72,7 +74,7 @@ char* DataContext_get_object(DataContext *pDc, char *szKey)
 
 bool DataContext_set_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen)
 {
-    if (dict_contains(&(pDc->dict), szKey))
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
@@ -103,7 +105,7 @@ void DataContext_add_command(DataContext *pDc, char *szKey, CommandFn fnCommand)
     InitDcItem(&item, ITEMDATATYPE_FUNC, szKey, NULL, 0);
     item.fnCommand = fnCommand;
 
-    dict_add(&(pDc->dict), szKey, (char*)&item, sizeof(DcItem));
+    dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
 
 size_t DataContext_get_str(DataContext *pDc, char *szKey, char **szStr)
@@ -122,7 +124,7 @@ size_t DataContext_get_str(DataContext *pDc, char *szKey, char **szStr)
 
 void DataContext_update(DataContext *pDc, char *szKey)
 {
-    if (dict_contains(&(pDc->dict), szKey))
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
@@ -144,7 +146,7 @@ void DataContext_update(DataContext *pDc, char *szKey)
 
 void DataContext_observe(DataContext *pDc, char *szKey, char *pObserver, size_t iObserverSize)
 {
-    if (dict_contains(&(pDc->dict), szKey))
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
