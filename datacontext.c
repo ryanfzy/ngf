@@ -1,9 +1,13 @@
 #include "datacontext.h"
 #include <string.h>
+#include "lib/dictiter.h"
+
+#define SIZEOF(x) (x), strlen(x)
 
 DataContext* create_datacontext()
 {
     DataContext *pDc = malloc(sizeof(DataContext));
+    pDc->pEvtHandler = NULL;
     dict_init(&(pDc->dict));
     return pDc;
 }
@@ -19,7 +23,12 @@ void free_datacontext(DataContext *pDc)
 {
     if (pDc != NULL)
     {
-        // todo: free every item.pData
+        DictIter *pIter = dict_get_iter(&(pDc->dict));
+        while (dictiter_move_next(pIter))
+        {
+            free(dictiter_get_key(pIter));
+            free(dictiter_get_value(pIter));
+        }
         dict_destroy(&(pDc->dict));
         free(pDc);
     }
@@ -40,8 +49,8 @@ static void InitDcItem(DcItem *pDcItem, DcItemType eType, char *szKey, char *pDa
 
 static DcItem* DataContext_get_item(DataContext *pDc, char *szKey)
 {
-    if (dict_contains(&(pDc->dict), szKey))
-        return (DcItem*)dict_get(&(pDc->dict), szKey);
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
+        return (DcItem*)dict_get(&(pDc->dict), SIZEOF(szKey));
     return NULL;
 }
 
@@ -51,7 +60,7 @@ void DataContext_add_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen
     InitDcItem(&item, ITEMDATATYPE_STRING, szKey, szStr, iLen+1);
     item.pData[iLen] = '\0';
 
-    dict_add(&(pDc->dict), szKey, (char*)&item, sizeof(DcItem));
+    dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
 
 void DataContext_add_object(DataContext *pDc, char *szKey, char *pData, size_t iSize)
@@ -59,7 +68,7 @@ void DataContext_add_object(DataContext *pDc, char *szKey, char *pData, size_t i
     DcItem item;
     InitDcItem(&item, ITEMDATATYPE_OBJECT, szKey, pData, iSize);
 
-    dict_add(&(pDc->dict), szKey, (char*)&item, sizeof(DcItem));
+    dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
 
 char* DataContext_get_object(DataContext *pDc, char *szKey)
@@ -72,7 +81,7 @@ char* DataContext_get_object(DataContext *pDc, char *szKey)
 
 bool DataContext_set_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen)
 {
-    if (dict_contains(&(pDc->dict), szKey))
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
@@ -88,7 +97,7 @@ bool DataContext_set_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen
             else
                 pItem->pData = szStr;
 
-            pItem->iDataSize = iLen;
+            pItem->iDataSize = iLen+1;
 
             DataContext_update(pDc, szKey);
             return true;
@@ -103,7 +112,7 @@ void DataContext_add_command(DataContext *pDc, char *szKey, CommandFn fnCommand)
     InitDcItem(&item, ITEMDATATYPE_FUNC, szKey, NULL, 0);
     item.fnCommand = fnCommand;
 
-    dict_add(&(pDc->dict), szKey, (char*)&item, sizeof(DcItem));
+    dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
 
 size_t DataContext_get_str(DataContext *pDc, char *szKey, char **szStr)
@@ -113,8 +122,9 @@ size_t DataContext_get_str(DataContext *pDc, char *szKey, char **szStr)
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL && pItem->eDataType == ITEMDATATYPE_STRING)
         {
-            *szStr = (char*)(pItem->pData);
-            return pItem->iDataSize;
+            if (szStr != NULL)
+                *szStr = (char*)(pItem->pData);
+            return pItem->iDataSize - 1;
         }
     }
     return 0;
@@ -122,7 +132,7 @@ size_t DataContext_get_str(DataContext *pDc, char *szKey, char **szStr)
 
 void DataContext_update(DataContext *pDc, char *szKey)
 {
-    if (dict_contains(&(pDc->dict), szKey))
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
@@ -144,7 +154,7 @@ void DataContext_update(DataContext *pDc, char *szKey)
 
 void DataContext_observe(DataContext *pDc, char *szKey, char *pObserver, size_t iObserverSize)
 {
-    if (dict_contains(&(pDc->dict), szKey))
+    if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
     {
         DcItem *pItem = DataContext_get_item(pDc, szKey);
         if (pItem != NULL)
