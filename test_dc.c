@@ -97,6 +97,64 @@ START_TEST(test_dc_add_object)
 }
 END_TEST
 
+static void fnTestCommand(DataContext *pDc)
+{
+    TestData *pt = (TestData*)DataContext_get_object(pDc, "test par");
+    ck_assert_int_eq(pt->ivalue, 1);
+    pt->ivalue = 2;
+}
+
+START_TEST(test_dc_add_cmd)
+{
+    TestData t;
+    t.ivalue = 1;
+    DataContext *pDc = create_datacontext();
+    DataContext_add_command(pDc, "test cmd", fnTestCommand);
+    DataContext_add_object(pDc, "test par", (char*)&t, sizeof(TestData));
+
+    DataContext_run_command(pDc, "test cmd");
+    TestData *pt = (TestData*)DataContext_get_object(pDc, "test par");
+    ck_assert_int_eq(pt->ivalue, 2);
+
+    free_datacontext(pDc);
+}
+END_TEST
+
+START_TEST(test_dc_update1)
+{
+    DataContext *pDc = create_datacontext();
+    DataContext_add_str(pDc, "test", "test str", 8);
+    DataContext_update(pDc, "test");
+    free_datacontext(pDc);
+}
+END_TEST
+
+static void fnTestEventHandler(Event *pEvt)
+{
+    ck_assert_msg(pEvt->eEvtType == EVENTTYPE_UPDATE, "event is not update event");
+    TestData *pt = (TestData*)pEvt->pObserver;
+    ck_assert_int_eq(pt->ivalue, 1);
+    pt->ivalue = 2;
+}
+
+START_TEST(test_dc_observe)
+{
+    EventHandler sEvtHandler;
+    sEvtHandler.fnRaiseEvent = fnTestEventHandler;
+    DataContext *pDc = create_dc_ex(&sEvtHandler);
+
+    TestData t;
+    t.ivalue = 1;
+    DataContext_add_str(pDc, "test", "test str", 8);
+    DataContext_observe(pDc, "test", (char*)&t, sizeof(TestData));
+    DataContext_update(pDc, "test");
+
+    ck_assert_int_eq(t.ivalue, 1);
+
+    free_datacontext(pDc);
+}
+END_TEST
+
 Suite* make_add_suit(void)
 {
     Suite *s = suite_create("dc");
@@ -105,6 +163,9 @@ Suite* make_add_suit(void)
     tcase_add_test(tc_dc, test_dc_create2);
     tcase_add_test(tc_dc, test_dc_add_str);
     tcase_add_test(tc_dc, test_dc_add_object);
+    tcase_add_test(tc_dc, test_dc_add_cmd);
+    tcase_add_test(tc_dc, test_dc_update1);
+    tcase_add_test(tc_dc, test_dc_observe);
     suite_add_tcase(s, tc_dc);
     return s;
 }

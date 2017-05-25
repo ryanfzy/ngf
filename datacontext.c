@@ -19,6 +19,13 @@ DataContext* create_dc_ex(EventHandler *pEvtHandler)
     return pDc;
 }
 
+static void DestroyDcItem(DcItem *pDcItem)
+{
+    free(pDcItem->pData);
+    for (int i = 0; i < slist_get_count(&(pDcItem->observers)); i++)
+        free(slist_get(&(pDcItem->observers), i));
+}
+
 void free_datacontext(DataContext *pDc)
 {
     if (pDc != NULL)
@@ -27,21 +34,25 @@ void free_datacontext(DataContext *pDc)
         while (dictiter_move_next(pIter))
         {
             free(dictiter_get_key(pIter));
-            free(dictiter_get_value(pIter));
+            DcItem *pItem = (DcItem*)dictiter_get_value(pIter);
+            DestroyDcItem(pItem);
+            free(pItem);
         }
         dict_destroy(&(pDc->dict));
         free(pDc);
     }
 }
 
-static void InitDcItem(DcItem *pDcItem, DcItemType eType, char *szKey, char *pData, size_t iSize)
+static void InitDcItem(DcItem *pDcItem, DcItemType eType, char *pData, size_t iSize)
 {
-    pDcItem->szKey = szKey;
     if (pData != NULL && iSize > 0)
     {
         pDcItem->pData = malloc(iSize);
         memcpy(pDcItem->pData, pData, iSize);
     }
+    else
+        pDcItem->pData = NULL;
+
     pDcItem->iDataSize = iSize;
     pDcItem->eDataType = eType;
     slist_init(&(pDcItem->observers));
@@ -57,7 +68,7 @@ static DcItem* DataContext_get_item(DataContext *pDc, char *szKey)
 void DataContext_add_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen)
 {
     DcItem item;
-    InitDcItem(&item, ITEMDATATYPE_STRING, szKey, szStr, iLen+1);
+    InitDcItem(&item, ITEMDATATYPE_STRING, szStr, iLen+1);
     item.pData[iLen] = '\0';
 
     dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
@@ -66,7 +77,7 @@ void DataContext_add_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen
 void DataContext_add_object(DataContext *pDc, char *szKey, char *pData, size_t iSize)
 {
     DcItem item;
-    InitDcItem(&item, ITEMDATATYPE_OBJECT, szKey, pData, iSize);
+    InitDcItem(&item, ITEMDATATYPE_OBJECT, pData, iSize);
 
     dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));
 }
@@ -109,7 +120,7 @@ bool DataContext_set_str(DataContext *pDc, char *szKey, char *szStr, size_t iLen
 void DataContext_add_command(DataContext *pDc, char *szKey, CommandFn fnCommand)
 {
     DcItem item;
-    InitDcItem(&item, ITEMDATATYPE_FUNC, szKey, NULL, 0);
+    InitDcItem(&item, ITEMDATATYPE_FUNC, NULL, 0);
     item.fnCommand = fnCommand;
 
     dict_add(&(pDc->dict), SIZEOF(szKey), (char*)&item, sizeof(DcItem));

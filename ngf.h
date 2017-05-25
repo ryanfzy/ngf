@@ -41,7 +41,6 @@ typedef void (*CommandFn)(DataContext*);
 
 typedef struct _dataContextItem
 {
-    char *szKey;
     char *pData;
     size_t iDataSize;
     CommandFn fnCommand;
