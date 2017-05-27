@@ -41,32 +41,32 @@ END_TEST
 
 START_TEST(test_dc_add_str)
 {
-    char *pExpect = "test value";
+    wchar_t *pExpect = L"test value";
     DataContext *pDc = create_datacontext();
-    DataContext_add_str(pDc, "test", pExpect, strlen(pExpect));
-    DataContext_add_str(pDc, "test2", "test2 value", 11);
+    DataContext_add_str(pDc, L"test", pExpect);
+    DataContext_add_str(pDc, L"test2", L"test2 value");
 
-    char *pActual = NULL;
-    int iLen = DataContext_get_str(pDc, "test", &pActual);
+    wchar_t *pActual = NULL;
+    int iLen = DataContext_get_str(pDc, L"test", &pActual);
 
     ck_assert_int_eq(iLen, 10);
     ck_assert_msg(pActual != NULL, "pActual is NULL");
-    ck_assert_msg(strcmp(pActual, "test value") == 0, "pActual is wrong");
+    ck_assert_msg(wcscmp(pActual, L"test value") == 0, "pActual is wrong");
     ck_assert_msg(pExpect != pActual, "pExpect and pActual refers to the same memory location");
 
-    iLen = DataContext_get_str(pDc, "test2", &pActual);
+    iLen = DataContext_get_str(pDc, L"test2", &pActual);
     ck_assert_int_eq(iLen, 11);
-    ck_assert_msg(strcmp(pActual, "test2 value") == 0, "pActual is wrong");
+    ck_assert_msg(wcscmp(pActual, L"test2 value") == 0, "pActual is wrong");
 
     pActual = NULL;
-    iLen = DataContext_get_str(pDc, "test3", &pActual);
+    iLen = DataContext_get_str(pDc, L"test3", &pActual);
     ck_assert_int_eq(iLen, 0);
     ck_assert_msg(pActual == NULL, "pActual is not NULL");
 
-    DataContext_set_str(pDc, "test", "test3 value", 11);
-    iLen = DataContext_get_str(pDc, "test", &pActual);
+    DataContext_set_str(pDc, L"test", L"test3 value");
+    iLen = DataContext_get_str(pDc, L"test", &pActual);
     ck_assert_int_eq(iLen, 11);
-    ck_assert_msg(strcmp(pActual, "test3 value") == 0, "pActual is wrong");
+    ck_assert_msg(wcscmp(pActual, L"test3 value") == 0, "pActual is wrong");
 
     free_datacontext(pDc);
 }
@@ -79,18 +79,18 @@ START_TEST(test_dc_add_object)
     t2.ivalue = 2;
     DataContext *pDc = create_datacontext();
 
-    DataContext_add_object(pDc, "test1", (char*)&t1, sizeof(TestData));
-    DataContext_add_object(pDc, "test2", (char*)&t2, sizeof(TestData));
+    DataContext_add_object(pDc, L"test1", (char*)&t1, sizeof(TestData));
+    DataContext_add_object(pDc, L"test2", (char*)&t2, sizeof(TestData));
 
-    TestData *pt = (TestData*)DataContext_get_object(pDc, "test1");
+    TestData *pt = (TestData*)DataContext_get_object(pDc, L"test1");
     ck_assert_msg(pt != NULL, "pt is NULL");
     ck_assert_msg(pt != &t1, "pt and t1 refers to the same memory location");
     ck_assert_int_eq(pt->ivalue, 1);
 
-    pt = (TestData*)DataContext_get_object(pDc, "test2");
+    pt = (TestData*)DataContext_get_object(pDc, L"test2");
     ck_assert_int_eq(pt->ivalue, 2);
 
-    pt = (TestData*)DataContext_get_object(pDc, "test3");
+    pt = (TestData*)DataContext_get_object(pDc, L"test3");
     ck_assert_msg(pt == NULL, "pt is not NULL");
 
     free_datacontext(pDc);
@@ -99,7 +99,7 @@ END_TEST
 
 static void fnTestCommand(DataContext *pDc)
 {
-    TestData *pt = (TestData*)DataContext_get_object(pDc, "test par");
+    TestData *pt = (TestData*)DataContext_get_object(pDc, L"test par");
     ck_assert_int_eq(pt->ivalue, 1);
     pt->ivalue = 2;
 }
@@ -109,11 +109,11 @@ START_TEST(test_dc_add_cmd)
     TestData t;
     t.ivalue = 1;
     DataContext *pDc = create_datacontext();
-    DataContext_add_command(pDc, "test cmd", fnTestCommand);
-    DataContext_add_object(pDc, "test par", (char*)&t, sizeof(TestData));
+    DataContext_add_command(pDc, L"test cmd", fnTestCommand);
+    DataContext_add_object(pDc, L"test par", (char*)&t, sizeof(TestData));
 
-    DataContext_run_command(pDc, "test cmd");
-    TestData *pt = (TestData*)DataContext_get_object(pDc, "test par");
+    DataContext_run_command(pDc, L"test cmd");
+    TestData *pt = (TestData*)DataContext_get_object(pDc, L"test par");
     ck_assert_int_eq(pt->ivalue, 2);
 
     free_datacontext(pDc);
@@ -123,8 +123,8 @@ END_TEST
 START_TEST(test_dc_update1)
 {
     DataContext *pDc = create_datacontext();
-    DataContext_add_str(pDc, "test", "test str", 8);
-    DataContext_update(pDc, "test");
+    DataContext_add_str(pDc, L"test", L"test str");
+    DataContext_update(pDc, L"test");
     free_datacontext(pDc);
 }
 END_TEST
@@ -145,9 +145,9 @@ START_TEST(test_dc_observe)
 
     TestData t;
     t.ivalue = 1;
-    DataContext_add_str(pDc, "test", "test str", 8);
-    DataContext_observe(pDc, "test", (char*)&t, sizeof(TestData));
-    DataContext_update(pDc, "test");
+    DataContext_add_str(pDc, L"test", L"test str");
+    DataContext_observe(pDc, L"test", (char*)&t, sizeof(TestData));
+    DataContext_update(pDc, L"test");
 
     ck_assert_int_eq(t.ivalue, 1);
 
