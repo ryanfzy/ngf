@@ -188,3 +188,4 @@ void DataContext_run_command(DataContext *pDc, wchar_t *szKey)
     if (pItem != NULL && pItem->eDataType == ITEMDATATYPE_FUNC)
         pItem->fnCommand(pDc);
 }
+
