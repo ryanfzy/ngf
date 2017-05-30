@@ -10,6 +10,8 @@ static const int FE_GRID = 2;
 static const int FE_BUTTON = 3;
 static const int FE_TEXTBLOCK = 4;
 static const int FE_BORDER = 5;
+static const int FE_TREEVIEW = 6;
+static const int FE_TVITEM = 7;
 
 static const int SIZE_AUTO = -1;
 
@@ -19,6 +21,7 @@ typedef struct _frameworkElement
     char *pElement;
 } FrameworkElement;
 
+/*
 typedef struct _propertInfo
 {
     bool bIsBinding;
@@ -26,6 +29,7 @@ typedef struct _propertInfo
     int iValue;
     int szValue;
 } PropertyInfo;
+*/
 
 typedef struct _visualInfo
 {
@@ -74,8 +78,8 @@ typedef struct _columnDefinition
 typedef struct _buttonInfo
 {
     ControlInfo controlInfo;
-    char *szContent;
-    char *szCommand;
+    wchar_t *szContent;
+    wchar_t *szCommand;
 } ButtonInfo;
 
 typedef struct _staticInfo
@@ -88,7 +92,7 @@ typedef struct _textBlockInfo
 {
     StaticInfo staticInfo;
     //PropertyInfo textProperty;
-    char *szText;
+    wchar_t *szText;
 } TextBlockInfo;
 
 typedef struct _borderInfo
@@ -96,17 +100,36 @@ typedef struct _borderInfo
     LayoutInfo layoutInfo;
 } BorderInfo;
 
+typedef struct _treeViewInfo
+{
+    LayoutInfo layoutInfo;
+} TreeViewInfo;
+
+typedef struct _tvItemInfo
+{
+    ControlInfo controlInfo;
+    //wchar_t *szHeader;
+    FrameworkElement *pHeaderFe;
+    bool bExpanded;
+} TvItemInfo;
+
 FrameworkElement* zaml_create_grid();
 FrameworkElement* zaml_create_grid_ex(int x, int y, int width, int height, DataContext *pDc);
 
 FrameworkElement* zaml_create_button();
-FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, char *szContent, char *szCommand, DataContext *pDc);
+FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, wchar_t *szContent, wchar_t *szCommand, DataContext *pDc);
 
 FrameworkElement* zaml_create_textblock();
-FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, char *szText, DataContext *pDc);
+FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, wchar_t *szText, DataContext *pDc);
 
 FrameworkElement* zaml_create_border();
 FrameworkElement* zaml_create_border_ex(int x, int y, int width, int height, DataContext *pDc);
+
+FrameworkElement* zaml_create_treeview();
+FrameworkElement* zaml_create_treeview_ex(int x, int y, int width, int height, DataContext *pDc);
+
+FrameworkElement* zaml_create_tvitem();
+FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, /*wchar_t *szHeader*/FrameworkElement *pHeaderFe, DataContext *pDc);
 
 bool zaml_add_child(FrameworkElement *pParentFe, FrameworkElement *pChildFe);
 int zaml_get_children_count(FrameworkElement *pFe);

@@ -4,6 +4,13 @@
 #include "datacontext.h"
 #include <windows.h>
 
+static FrameworkElement* create_fe(int iFeType)
+{
+    FrameworkElement *pFe = malloc(sizeof(FrameworkElement));
+    pFe->iType = iFeType;
+    return pFe;
+}
+
 static void InitLayoutInfo(LayoutInfo *pLayoutInfo)
 {
     slist_init(&(pLayoutInfo->children));
@@ -11,8 +18,9 @@ static void InitLayoutInfo(LayoutInfo *pLayoutInfo)
 
 FrameworkElement* zaml_create_grid()
 {
-    FrameworkElement *pGridFe = malloc(sizeof(FrameworkElement));
-    pGridFe->iType = FE_GRID;
+    //FrameworkElement *pGridFe = malloc(sizeof(FrameworkElement));
+    //pGridFe->iType = FE_GRID;
+    FrameworkElement *pGridFe = create_fe(FE_GRID);
     
     GridInfo *pGridInfo = malloc(sizeof(GridInfo));
     InitLayoutInfo(&(pGridInfo->layoutInfo));
@@ -37,8 +45,9 @@ FrameworkElement* zaml_create_grid_ex(int x, int y, int width, int height, DataC
 
 FrameworkElement* zaml_create_button()
 {
-    FrameworkElement *pBtnFe = malloc(sizeof(FrameworkElement));
-    pBtnFe->iType = FE_BUTTON;
+    //FrameworkElement *pBtnFe = malloc(sizeof(FrameworkElement));
+    //pBtnFe->iType = FE_BUTTON;
+    FrameworkElement *pBtnFe = create_fe(FE_BUTTON);
 
     ButtonInfo *pButtonInfo = malloc(sizeof(ButtonInfo));
     pBtnFe->pElement = (char*)pButtonInfo;
@@ -46,7 +55,7 @@ FrameworkElement* zaml_create_button()
     return pBtnFe;
 }
 
-FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, char *szContent, char *szCommand, DataContext *pDc)
+FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, wchar_t *szContent, wchar_t *szCommand, DataContext *pDc)
 {
     FrameworkElement *pBtnFe = zaml_create_button();
     ButtonInfo *pButtonInfo = (ButtonInfo*)(pBtnFe->pElement);
@@ -55,7 +64,6 @@ FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, cha
     pButtonInfo->controlInfo.visualInfo.y = y;
     pButtonInfo->controlInfo.visualInfo.width = width;
     pButtonInfo->controlInfo.visualInfo.height = height;
-    //pButtonInfo->controlInfo.iId = id;
     pButtonInfo->szContent = szContent;
     pButtonInfo->controlInfo.pDc = pDc;
     pButtonInfo->szCommand = szCommand;
@@ -65,8 +73,9 @@ FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, cha
 
 FrameworkElement* zaml_create_textblock()
 {
-    FrameworkElement *pTbFe = malloc(sizeof(FrameworkElement));
-    pTbFe->iType = FE_TEXTBLOCK;
+    //FrameworkElement *pTbFe = malloc(sizeof(FrameworkElement));
+    //pTbFe->iType = FE_TEXTBLOCK;
+    FrameworkElement *pTbFe = create_fe(FE_TEXTBLOCK);
 
     TextBlockInfo *pTbInfo = malloc(sizeof(TextBlockInfo));
     pTbFe->pElement = (char*)pTbInfo;
@@ -74,7 +83,7 @@ FrameworkElement* zaml_create_textblock()
     return pTbFe;
 }
 
-FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, char *szText, DataContext *pDc)
+FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, wchar_t *szText, DataContext *pDc)
 {
     FrameworkElement *pTbFe = zaml_create_textblock();
     TextBlockInfo *pTbInfo = (TextBlockInfo*)(pTbFe->pElement);
@@ -91,8 +100,9 @@ FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, 
 
 FrameworkElement* zaml_create_border()
 {
-    FrameworkElement *pBdrFe = malloc(sizeof(FrameworkElement));
-    pBdrFe->iType = FE_BORDER;
+    //FrameworkElement *pBdrFe = malloc(sizeof(FrameworkElement));
+    //pBdrFe->iType = FE_BORDER;
+    FrameworkElement *pBdrFe = create_fe(FE_BORDER);
 
     BorderInfo *pBorderInfo = malloc(sizeof(BorderInfo));
     InitLayoutInfo(&(pBorderInfo->layoutInfo));
@@ -115,6 +125,58 @@ FrameworkElement* zaml_create_border_ex(int x, int y, int width, int height, Dat
     return pBdrFe;
 }
 
+FrameworkElement* zaml_create_treeview()
+{
+    FrameworkElement *pFe = create_fe(FE_TREEVIEW);
+
+    TreeViewInfo *pInfo = malloc(sizeof(TreeViewInfo));
+    InitLayoutInfo(&(pInfo->layoutInfo));
+    pFe->pElement = (char*)pInfo;
+
+    return pFe;
+}
+
+FrameworkElement* zaml_create_treeview_ex(int x, int y, int width, int height, DataContext *pDc)
+{
+    FrameworkElement *pFe = zaml_create_treeview();
+    TreeViewInfo *pInfo = (TreeViewInfo*)(pFe->pElement);
+
+    pInfo->layoutInfo.visualInfo.x = x;
+    pInfo->layoutInfo.visualInfo.y = y;
+    pInfo->layoutInfo.visualInfo.width = width;;
+    pInfo->layoutInfo.visualInfo.height = height;;
+    pInfo->layoutInfo.pDc = pDc;
+
+    return pFe;
+}
+
+FrameworkElement* zaml_create_tvitem()
+{
+    FrameworkElement *pFe = create_fe(FE_TVITEM);
+
+    TvItemInfo *pInfo = malloc(sizeof(TvItemInfo));
+    pInfo->bExpanded = false;
+    pFe->pElement = (char*)pInfo;
+
+    return pFe;
+}
+
+FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, /*wchar_t *szHeader*/FrameworkElement *pHeaderFe, DataContext *pDc)
+{
+    FrameworkElement *pFe = zaml_create_tvitem();
+    TvItemInfo *pInfo = (TvItemInfo*)(pFe->pElement);
+
+    pInfo->controlInfo.visualInfo.x = x;
+    pInfo->controlInfo.visualInfo.y = y;
+    pInfo->controlInfo.visualInfo.width = width;
+    pInfo->controlInfo.visualInfo.height = height;
+    pInfo->controlInfo.pDc = pDc;
+    //pInfo->szHeader = szHeader;
+    pInfo->pHeaderFe = pHeaderFe;
+
+    return pFe;
+}
+
 static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
 {
     LayoutInfo *pLayoutInfo = NULL;
@@ -127,6 +189,11 @@ static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
     {
         BorderInfo *pBorderInfo = (BorderInfo*)(pFe->pElement);
         pLayoutInfo = &(pBorderInfo->layoutInfo);
+    }
+    else if (pFe->iType == FE_TREEVIEW)
+    {
+        TreeViewInfo *pInfo = (TreeViewInfo*)(pFe->pElement);
+        pLayoutInfo = &(pInfo->layoutInfo);
     }
     return pLayoutInfo;
 }

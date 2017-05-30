@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <wchar.h>
 #include "lib/dict.h"
 #include "lib/list.h"
 
@@ -41,7 +42,7 @@ typedef void (*CommandFn)(DataContext*);
 
 typedef struct _dataContextItem
 {
-    char *szKey;
+    wchar_t *szKey;
     char *pData;
     size_t iDataSize;
     CommandFn fnCommand;
