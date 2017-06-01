@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include "lib/list.h"
 #include "datacontext.h"
+#include "property.h"
 
 static const int FE_WINDOW = 1;
 static const int FE_GRID = 2;
@@ -91,8 +92,7 @@ typedef struct _staticInfo
 typedef struct _textBlockInfo
 {
     StaticInfo staticInfo;
-    //PropertyInfo textProperty;
-    wchar_t *szText;
+    PropertyInfo *pTextProperty;
 } TextBlockInfo;
 
 typedef struct _borderInfo
@@ -108,7 +108,6 @@ typedef struct _treeViewInfo
 typedef struct _tvItemInfo
 {
     ControlInfo controlInfo;
-    //wchar_t *szHeader;
     FrameworkElement *pHeaderFe;
     bool bExpanded;
 } TvItemInfo;
@@ -120,7 +119,7 @@ FrameworkElement* zaml_create_button();
 FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, wchar_t *szContent, wchar_t *szCommand, DataContext *pDc);
 
 FrameworkElement* zaml_create_textblock();
-FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, wchar_t *szText, DataContext *pDc);
+FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, PropertyInfo *pTextProp);
 
 FrameworkElement* zaml_create_border();
 FrameworkElement* zaml_create_border_ex(int x, int y, int width, int height, DataContext *pDc);
@@ -129,7 +128,7 @@ FrameworkElement* zaml_create_treeview();
 FrameworkElement* zaml_create_treeview_ex(int x, int y, int width, int height, DataContext *pDc);
 
 FrameworkElement* zaml_create_tvitem();
-FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, /*wchar_t *szHeader*/FrameworkElement *pHeaderFe, DataContext *pDc);
+FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, FrameworkElement *pHeaderFe, DataContext *pDc);
 
 bool zaml_add_child(FrameworkElement *pParentFe, FrameworkElement *pChildFe);
 int zaml_get_children_count(FrameworkElement *pFe);

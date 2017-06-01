@@ -18,8 +18,6 @@ static void InitLayoutInfo(LayoutInfo *pLayoutInfo)
 
 FrameworkElement* zaml_create_grid()
 {
-    //FrameworkElement *pGridFe = malloc(sizeof(FrameworkElement));
-    //pGridFe->iType = FE_GRID;
     FrameworkElement *pGridFe = create_fe(FE_GRID);
     
     GridInfo *pGridInfo = malloc(sizeof(GridInfo));
@@ -45,8 +43,6 @@ FrameworkElement* zaml_create_grid_ex(int x, int y, int width, int height, DataC
 
 FrameworkElement* zaml_create_button()
 {
-    //FrameworkElement *pBtnFe = malloc(sizeof(FrameworkElement));
-    //pBtnFe->iType = FE_BUTTON;
     FrameworkElement *pBtnFe = create_fe(FE_BUTTON);
 
     ButtonInfo *pButtonInfo = malloc(sizeof(ButtonInfo));
@@ -73,17 +69,16 @@ FrameworkElement* zaml_create_button_ex(int x, int y, int width, int height, wch
 
 FrameworkElement* zaml_create_textblock()
 {
-    //FrameworkElement *pTbFe = malloc(sizeof(FrameworkElement));
-    //pTbFe->iType = FE_TEXTBLOCK;
     FrameworkElement *pTbFe = create_fe(FE_TEXTBLOCK);
 
     TextBlockInfo *pTbInfo = malloc(sizeof(TextBlockInfo));
+    pTbInfo->pTextProperty = NULL;
     pTbFe->pElement = (char*)pTbInfo;
 
     return pTbFe;
 }
 
-FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, wchar_t *szText, DataContext *pDc)
+FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, PropertyInfo *pTextProp)
 {
     FrameworkElement *pTbFe = zaml_create_textblock();
     TextBlockInfo *pTbInfo = (TextBlockInfo*)(pTbFe->pElement);
@@ -92,16 +87,13 @@ FrameworkElement* zaml_create_textblock_ex(int x, int y, int width, int height, 
     pTbInfo->staticInfo.visualInfo.y = y;
     pTbInfo->staticInfo.visualInfo.width = width;
     pTbInfo->staticInfo.visualInfo.height = height;
-    pTbInfo->staticInfo.pDc = pDc;
-    pTbInfo->szText = szText;
+    pTbInfo->pTextProperty = pTextProp;
 
     return pTbFe;
 }
 
 FrameworkElement* zaml_create_border()
 {
-    //FrameworkElement *pBdrFe = malloc(sizeof(FrameworkElement));
-    //pBdrFe->iType = FE_BORDER;
     FrameworkElement *pBdrFe = create_fe(FE_BORDER);
 
     BorderInfo *pBorderInfo = malloc(sizeof(BorderInfo));
@@ -161,7 +153,7 @@ FrameworkElement* zaml_create_tvitem()
     return pFe;
 }
 
-FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, /*wchar_t *szHeader*/FrameworkElement *pHeaderFe, DataContext *pDc)
+FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, FrameworkElement *pHeaderFe, DataContext *pDc)
 {
     FrameworkElement *pFe = zaml_create_tvitem();
     TvItemInfo *pInfo = (TvItemInfo*)(pFe->pElement);
@@ -171,7 +163,6 @@ FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, /*w
     pInfo->controlInfo.visualInfo.width = width;
     pInfo->controlInfo.visualInfo.height = height;
     pInfo->controlInfo.pDc = pDc;
-    //pInfo->szHeader = szHeader;
     pInfo->pHeaderFe = pHeaderFe;
 
     return pFe;

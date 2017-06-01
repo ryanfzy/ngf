@@ -81,6 +81,12 @@ void propinfo_set_binding(PropertyInfo *pInfo, BindingInfo *pBinding)
         pInfo->pBinding = pBinding;
 }
 
+void propinfo_observe(PropertyInfo *pInfo, char *pObserver, size_t iObserverSize)
+{
+    if (pInfo != NULL && pInfo->pBinding != NULL && pObserver != NULL && iObserverSize > 0)
+        DataContext_observe(pInfo->pBinding->pDc, pInfo->pBinding->szKey, pObserver, iObserverSize);
+}
+
 BindingInfo* binding_create(wchar_t *szKey, DataContext *pDc)
 {
     BindingInfo *pBinding = malloc(sizeof(BindingInfo));
@@ -119,48 +125,3 @@ bool binding_get(BindingInfo *pInfo, PropertyType eType, char *pValue)
     return false;
 }
 
-/*
-PropertyInfo* propinfo_create_ex(wchar_t *szKey, PropertyType eType)
-{
-    PropertyInfo *pInfo = propinfo_create();
-    pInfo->szKey = szKey;
-    pInfo->eType = eType;
-    pInfo->bIsBinding = true;
-    return pInfo;
-}
-
-PropertyInfo* propinfo_create_str(wchar_t *szValue)
-{
-    PropertyInfo *pInfo = propinfo_create();
-    pInfo->szKey = szValue;
-    pInfo->eType = PropertyType_Str;
-    pInfo->bIsBinding = false;
-    return pInfo;
-}
-
-bool propinfo_get_value(PropertyInfo *pInfo, DataContext *pDc, char *pValue)
-{
-    if (pInfo != NULL)
-    {
-        if (pInfo->bIsBinding)
-        {
-            if (pDc != NULL)
-            {
-                if (pInfo->eType == PropertyType_Str)
-                {
-                    DataContext_get_str(pDc, pInfo->szKey, (wchar_t**)pValue);
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            if (pValue != NULL)
-            {
-                *((char**)pValue) = (char*)(pInfo->szKey);
-                return true;
-            }
-        }
-    }
-    return false;
-}*/
