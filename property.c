@@ -27,9 +27,7 @@ void propinfo_set(PropertyInfo *pInfo, char *pValue)
     if (pInfo != NULL && pValue != NULL)
     {
         if (pInfo->pBinding != NULL)
-        {
             binding_set(pInfo->pBinding, pInfo->eType, pValue);
-        }
         else
         {
             size_t iSize = 0;
@@ -39,7 +37,7 @@ void propinfo_set(PropertyInfo *pInfo, char *pValue)
                 iSize = sizeof(int);
 
             pInfo->pValue = malloc(iSize);
-            memset(pValue, 0, iSize);
+            memset(pInfo->pValue, 0, iSize);
             memcpy(pInfo->pValue, pValue, iSize);
         }
     }
@@ -47,32 +45,26 @@ void propinfo_set(PropertyInfo *pInfo, char *pValue)
 
 bool propinfo_get(PropertyInfo *pInfo, char *pValue)
 {
-    if (pInfo != NULL && pValue != NULL)
+    bool bResult = false;
+    if (pInfo != NULL)
     {
         if (pInfo->pBinding != NULL)
-        {
             return binding_get(pInfo->pBinding, pInfo->eType, pValue);
-        }
-        else
+        else if (pInfo->pValue != NULL)
         {
-            bool bret = false;
-            if (pInfo->pValue != NULL)
+            if (pInfo->eType == PropertyType_Str)
             {
-                if (pInfo->eType == PropertyType_Str)
-                {
-                    *((wchar_t**)pValue) = (wchar_t*)(pInfo->pValue);
-                    bret = true;
-                }
-                else if (pInfo->eType == PropertyType_Int)
-                {
-                    *((int*)pValue) = *(pInfo->pValue);
-                    bret = true;
-                }
+                *(wchar_t**)pValue = (wchar_t*)(pInfo->pValue);
+                bResult = true;
             }
-            return bret;
+            else if (pInfo->eType == PropertyType_Int)
+            {
+                *(int*)pValue = *((int*)(pInfo->pValue));
+                bResult = true;
+            }
         }
     }
-    return false;
+    return bResult;
 }
 
 void propinfo_set_binding(PropertyInfo *pInfo, BindingInfo *pBinding)

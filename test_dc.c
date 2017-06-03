@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <check.h>
 #include "datacontext.h"
+#include "property.h"
 
 typedef struct _TestData
 {
@@ -155,9 +156,80 @@ START_TEST(test_dc_observe)
 }
 END_TEST
 
+START_TEST(test_prop_create)
+{
+    PropertyInfo *pInfo = propinfo_create_ex(PropertyType_Str);
+    ck_assert_msg(pInfo->eType == PropertyType_Str, "property type is not string");
+    ck_assert_msg(pInfo->pBinding == NULL, "binding is not NULL");
+    ck_assert_msg(pInfo->pValue == NULL, "value is not NULL");
+    propinfo_free(pInfo);
+}
+END_TEST
+
+START_TEST(test_prop_set_str)
+{
+    PropertyInfo *pInfo = propinfo_create_ex(PropertyType_Str);
+    wchar_t *szText = L"123";
+    propinfo_set(pInfo, (char*)szText);
+    ck_assert_msg(wcscmp((wchar_t*)(pInfo->pValue), szText) == 0, "set is not working");
+}
+END_TEST
+
+START_TEST(test_prop_get_str)
+{
+    PropertyInfo *pInfo = propinfo_create_ex(PropertyType_Str);
+    wchar_t *szText = L"test";
+    propinfo_set(pInfo, (char*)szText);
+
+    wchar_t *szExp = NULL;
+    bool ret = propinfo_get(pInfo, (char*)(&szExp));
+    ck_assert_msg(ret == true, "get return false");
+    ck_assert_msg(szExp != NULL, "exp is NULL");
+    ck_assert_msg(wcscmp((wchar_t*)szExp, szText) == 0, "get is not working");
+}
+END_TEST
+
+START_TEST(test_binding_create)
+{
+    DataContext *pDc = create_datacontext();
+    DataContext_add_str(pDc, L"key", L"value");
+    BindingInfo *pBinding = binding_create(L"key", pDc);
+
+    ck_assert_msg(pBinding->pDc != NULL, "dc is NULL");
+    ck_assert_msg(pBinding->pDc == pDc, "dc is not correct");
+    ck_assert_msg(wcscmp(pBinding->szKey, L"key") == 0, "key is wrong");
+}
+END_TEST
+
+START_TEST(test_prop_binding)
+{
+    DataContext *pDc = create_datacontext();
+    DataContext_add_str(pDc, L"key", L"value");
+    BindingInfo *pBinding = binding_create(L"key", pDc);
+
+    PropertyInfo *pInfo = propinfo_create_ex(PropertyType_Str);
+    propinfo_set_binding(pInfo, pBinding);
+
+    ck_assert_msg(pInfo->pBinding != NULL, "binding is NULL");
+    ck_assert_msg(pInfo->pBinding == pBinding, "binding is not correct");
+    ck_assert_msg(pInfo->pValue == NULL, "value is not NULL");
+
+    wchar_t* szExp = NULL;
+    bool ret = propinfo_get(pInfo, (char*)(&szExp));
+    ck_assert_msg(ret == true, "get returns false");
+    ck_assert_msg(szExp != NULL, "returned value is NULL");
+    ck_assert_msg(wcscmp(szExp, L"value") == 0, "returned value is not correct");
+
+    DataContext_set_str(pDc, L"key", L"value 2");
+    propinfo_get(pInfo, (char*)(&szExp));
+    ck_assert_msg(wcscmp(szExp, L"value 2") == 0, "returned value is not correct");
+}
+END_TEST
+
 Suite* make_add_suit(void)
 {
-    Suite *s = suite_create("dc");
+    Suite *s = suite_create("ngf");
+
     TCase *tc_dc = tcase_create("dc");
     tcase_add_test(tc_dc, test_dc_create1);
     tcase_add_test(tc_dc, test_dc_create2);
@@ -167,6 +239,15 @@ Suite* make_add_suit(void)
     tcase_add_test(tc_dc, test_dc_update1);
     tcase_add_test(tc_dc, test_dc_observe);
     suite_add_tcase(s, tc_dc);
+
+    TCase *tc_prop = tcase_create("prop");
+    tcase_add_test(tc_prop, test_prop_create);
+    tcase_add_test(tc_prop, test_prop_set_str);
+    tcase_add_test(tc_prop, test_prop_get_str);
+    tcase_add_test(tc_prop, test_binding_create);
+    tcase_add_test(tc_prop, test_prop_binding);
+    suite_add_tcase(s, tc_prop);
+
     return s;
 }
 
