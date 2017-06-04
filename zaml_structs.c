@@ -4,18 +4,6 @@
 #include "datacontext.h"
 #include <windows.h>
 
-static FrameworkElement* create_fe(int iFeType)
-{
-    FrameworkElement *pFe = malloc(sizeof(FrameworkElement));
-    pFe->iType = iFeType;
-    return pFe;
-}
-
-static void InitLayoutInfo(LayoutInfo *pLayoutInfo)
-{
-    slist_init(&(pLayoutInfo->children));
-}
-
 FrameworkElement* zaml_create_grid()
 {
     FrameworkElement *pGridFe = create_fe(FE_GRID);
@@ -116,57 +104,6 @@ FrameworkElement* zaml_create_border_ex(int x, int y, int width, int height, Dat
     pBorderInfo->layoutInfo.pDc = pDc;
 
     return pBdrFe;
-}
-
-FrameworkElement* zaml_create_treeview()
-{
-    FrameworkElement *pFe = create_fe(FE_TREEVIEW);
-
-    TreeViewInfo *pInfo = malloc(sizeof(TreeViewInfo));
-    InitLayoutInfo(&(pInfo->layoutInfo));
-    pFe->pElement = (char*)pInfo;
-
-    return pFe;
-}
-
-FrameworkElement* zaml_create_treeview_ex(int x, int y, int width, int height, DataContext *pDc)
-{
-    FrameworkElement *pFe = zaml_create_treeview();
-    TreeViewInfo *pInfo = (TreeViewInfo*)(pFe->pElement);
-
-    pInfo->layoutInfo.visualInfo.x = x;
-    pInfo->layoutInfo.visualInfo.y = y;
-    pInfo->layoutInfo.visualInfo.width = width;;
-    pInfo->layoutInfo.visualInfo.height = height;;
-    pInfo->layoutInfo.pDc = pDc;
-
-    return pFe;
-}
-
-FrameworkElement* zaml_create_tvitem()
-{
-    FrameworkElement *pFe = create_fe(FE_TVITEM);
-
-    TvItemInfo *pInfo = malloc(sizeof(TvItemInfo));
-    pInfo->bExpanded = false;
-    pFe->pElement = (char*)pInfo;
-
-    return pFe;
-}
-
-FrameworkElement* zaml_create_tvitem_ex(int x, int y, int width, int height, FrameworkElement *pHeaderFe, DataContext *pDc)
-{
-    FrameworkElement *pFe = zaml_create_tvitem();
-    TvItemInfo *pInfo = (TvItemInfo*)(pFe->pElement);
-
-    pInfo->controlInfo.visualInfo.x = x;
-    pInfo->controlInfo.visualInfo.y = y;
-    pInfo->controlInfo.visualInfo.width = width;
-    pInfo->controlInfo.visualInfo.height = height;
-    pInfo->controlInfo.pDc = pDc;
-    pInfo->pHeaderFe = pHeaderFe;
-
-    return pFe;
 }
 
 static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
