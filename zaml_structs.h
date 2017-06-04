@@ -16,6 +16,13 @@ static const int FE_TVITEM = 7;
 
 static const int SIZE_AUTO = -1;
 
+typedef enum _horizontalAlignmentType
+{
+    HorizontalAlignment_Left,
+    HorizontalAlignment_Center,
+    HorizontalAlignment_Right,
+} HorizontalAlignmentType;
+
 typedef struct _frameworkElement
 {
     int iType;
@@ -92,6 +99,7 @@ typedef struct _staticInfo
 typedef struct _textBlockInfo
 {
     StaticInfo staticInfo;
+    HorizontalAlignmentType eContentHorizontal;
     PropertyInfo *pTextProperty;
 } TextBlockInfo;
 

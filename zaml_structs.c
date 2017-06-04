@@ -73,6 +73,7 @@ FrameworkElement* zaml_create_textblock()
 
     TextBlockInfo *pTbInfo = malloc(sizeof(TextBlockInfo));
     pTbInfo->pTextProperty = NULL;
+    pTbInfo->eContentHorizontal = HorizontalAlignment_Left;
     pTbFe->pElement = (char*)pTbInfo;
 
     return pTbFe;
