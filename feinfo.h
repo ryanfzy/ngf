@@ -52,6 +52,12 @@ typedef struct _controlInfo
     FrameworkElement child;
 } ControlInfo;
 
+typedef struct _staticInfo
+{
+    VisualInfo visualInfo;
+    DataContext *pDc;
+} StaticInfo;
+
 FrameworkElement* create_fe(int iFeType);
 void InitLayoutInfo(LayoutInfo *pInfo);
 
