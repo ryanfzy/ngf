@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <wchar.h>
+#include "types.h"
 #include "datacontext.h"
 
 typedef struct _binding
@@ -12,13 +13,6 @@ typedef struct _binding
     wchar_t *szKey;
     DataContext *pDc;
 } BindingInfo;
-
-typedef enum _properyType
-{
-    PropertyType_Null,
-    PropertyType_Str, 
-    PropertyType_Int,
-} PropertyType;
 
 typedef struct _propertyInfo
 {

@@ -11,8 +11,8 @@ typedef struct _treeViewInfo
 } TreeViewInfo;
 
 FrameworkElement* treeview_create();
-FrameworkElement* treeview_create_ex(int x, int y, int width, int height, DataContext *pDc);
+FrameworkElement* treeview_create_ex(int x, int y, int width, int height);
 
-void treeview_add_item(FrameworkElement *pTree, FrameworkElement *pItem);
+//void treeview_add_item(FrameworkElement *pTree, FrameworkElement *pItem);
 
 #endif

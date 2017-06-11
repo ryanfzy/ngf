@@ -16,4 +16,6 @@ typedef struct _textBlockInfo
 FrameworkElement* textblock_create();
 FrameworkElement* textblock_create_ex(int x, int y, int width, int height, PropertyInfo *pTextProp);
 
+FeSize textblock_get_size(FrameworkElement *pTb);
+
 #endif

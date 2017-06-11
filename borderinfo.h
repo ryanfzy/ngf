@@ -7,10 +7,13 @@
 
 typedef struct _borderInfo
 {
-    LayoutInfo layoutInfo;
+    //LayoutInfo layoutInfo;
+    DecoratorInfo decoratorInfo;
 } BorderInfo;
 
 FrameworkElement* border_create();
-FrameworkElement* border_create_ex(int x, int y, int width, int height, DataContext *pDc);
+FrameworkElement* border_create_ex(int x, int y, int width, int height);
+
+FeSize border_get_size(FrameworkElement *pFe);
 
 #endif

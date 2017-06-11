@@ -13,6 +13,7 @@ typedef struct _tvItemInfo
 } TvItemInfo;
 
 FrameworkElement* tvitem_create();
-FrameworkElement* tvitem_create_ex(int x, int y, int width, int height, FrameworkElement *pHeaderFe, DataContext *pDc);
+FrameworkElement* tvitem_create_ex(int x, int y, int width, int height, FrameworkElement *pHeaderFe);
 
+//FrameworkElement* tvitem_set_child(FrameworkElement *pItem, FrameworkElement *pChild);
 #endif

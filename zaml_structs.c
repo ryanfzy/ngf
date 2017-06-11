@@ -12,11 +12,13 @@ static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
         GridInfo *pGridInfo = (GridInfo*)(pFe->pElement);
         pLayoutInfo = &(pGridInfo->layoutInfo);
     }
+    /*
     else if (pFe->iType == FE_BORDER)
     {
         BorderInfo *pBorderInfo = (BorderInfo*)(pFe->pElement);
         pLayoutInfo = &(pBorderInfo->layoutInfo);
     }
+    */
     else if (pFe->iType == FE_TREEVIEW)
     {
         TreeViewInfo *pInfo = (TreeViewInfo*)(pFe->pElement);
@@ -64,3 +66,19 @@ FrameworkElement* zaml_get_child(FrameworkElement *pFe, int iPos)
     return NULL;
 }
 
+FeSize fe_get_size(FrameworkElement *pFe)
+{
+    FeSize size = {0, 0};
+    if (pFe != NULL && pFe->pElement != NULL)
+    {
+        if (pFe->iType == FE_GRID)
+            size = grid_get_size(pFe);
+        else if (pFe->iType == FE_BUTTON)
+            size =  button_get_size(pFe);
+        else if (pFe->iType == FE_TEXTBLOCK)
+            size = textblock_get_size(pFe);
+        else if (pFe->iType == FE_BORDER)
+            size = border_get_size(pFe);
+    }
+    return size;
+}

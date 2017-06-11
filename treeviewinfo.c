@@ -12,20 +12,20 @@ FrameworkElement* treeview_create()
     return pFe;
 }
 
-FrameworkElement* treeview_create_ex(int x, int y, int width, int height, DataContext *pDc)
+FrameworkElement* treeview_create_ex(int x, int y, int width, int height)
 {
     FrameworkElement *pFe = treeview_create();
     TreeViewInfo *pInfo = (TreeViewInfo*)(pFe->pElement);
 
     pInfo->layoutInfo.visualInfo.x = x;
     pInfo->layoutInfo.visualInfo.y = y;
-    pInfo->layoutInfo.visualInfo.width = 0;;
-    pInfo->layoutInfo.visualInfo.height = 0;;
-    pInfo->layoutInfo.pDc = NULL;
+    pInfo->layoutInfo.visualInfo.width = width;
+    pInfo->layoutInfo.visualInfo.height = height;
 
     return pFe;
 }
 
+/*
 void treeview_add_item(FrameworkElement *pTree, FrameworkElement *pItem)
 {
     if (pTree != NULL && pItem != NULL)
@@ -45,3 +45,4 @@ void treeview_add_item(FrameworkElement *pTree, FrameworkElement *pItem)
         }
     }
 }
+*/
