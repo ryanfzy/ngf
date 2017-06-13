@@ -51,10 +51,10 @@ int linfo_get_children_count(LayoutInfo *pInfo)
     return 0;
 }
 
-char* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos)
+FrameworkElement* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos)
 {
     if (pInfo != NULL && iPos < linfo_get_children_count(pInfo))
-        return slist_get(&(pInfo->children), iPos);
+        return *(FrameworkElement**)slist_get(&(pInfo->children), iPos);
     return NULL;
 }
 

@@ -61,7 +61,7 @@ void fe_set_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pVal
 bool fe_get_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pValue);
 
 int linfo_get_children_count(LayoutInfo *pInfo);
-char* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos);
+FrameworkElement* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos);
 
 FeSize vinfo_get_size(VisualInfo *pInfo);
 

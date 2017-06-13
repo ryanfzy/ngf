@@ -77,18 +77,14 @@ FeSize grid_get_size(FrameworkElement *pGrid)
         bool bAutoHeight = feSize.height == SIZE_AUTO;
         if (!bAutoWidth && !bAutoHeight)
             return feSize;
-        else
-        {
-            feSize.width = ymax(feSize.width, 0);
-            feSize.height = ymax(feSize.height, 0);
-        }
 
         if (bAutoHeight)
         {
+            feSize.height = 0;
             for (int iRow = 0; iRow <= grid_get_rowdef_count(pGrid); iRow++)
             {
                 RowDefinition *pRowDef = grid_get_rowdef(pGrid, iRow);
-                if (pRowDef->height != SIZE_AUTO)
+                if (pRowDef != NULL && pRowDef->height != SIZE_AUTO)
                     feSize.height += pRowDef->height;
                 else
                 {
@@ -112,10 +108,11 @@ FeSize grid_get_size(FrameworkElement *pGrid)
 
         if (bAutoWidth)
         {
+            feSize.width = 0;
             for (int iCol = 0; iCol <= grid_get_coldef_count(pGrid); iCol++)
             {
                 ColumnDefinition *pColDef = grid_get_coldef(pGrid, iCol);
-                if (pColDef->width != SIZE_AUTO)
+                if (pColDef != NULL && pColDef->width != SIZE_AUTO)
                     feSize.width += pColDef->width;
                 else
                 {

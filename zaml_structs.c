@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "zaml_structs.h"
 #include "datacontext.h"
-#include <windows.h>
 
 static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
 {
