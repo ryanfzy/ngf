@@ -170,7 +170,7 @@ int grid_get_coldef_count(FrameworkElement *pGrid)
 RowDefinition* grid_get_rowdef(FrameworkElement *pGrid, unsigned int iPos)
 {
     GridInfo *pInfo = _grid_getinfo(pGrid);
-    if (pInfo != NULL && iPos > -1 && iPos < grid_get_rowdef_count(pGrid))
+    if (pInfo != NULL && iPos < grid_get_rowdef_count(pGrid))
         return (RowDefinition*)slist_get(&(pInfo->RowDefinitions), iPos);
     return NULL;
 }
@@ -178,7 +178,7 @@ RowDefinition* grid_get_rowdef(FrameworkElement *pGrid, unsigned int iPos)
 ColumnDefinition* grid_get_coldef(FrameworkElement *pGrid, unsigned int iPos)
 {
     GridInfo *pInfo = _grid_getinfo(pGrid);
-    if (pInfo != NULL && iPos > -1 && iPos < grid_get_coldef_count(pGrid))
+    if (pInfo != NULL && iPos < grid_get_coldef_count(pGrid))
         return (ColumnDefinition*)slist_get(&(pInfo->ColumnDefinitions), iPos);
     return NULL;
 }
