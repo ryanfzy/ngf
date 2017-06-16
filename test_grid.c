@@ -138,6 +138,33 @@ START_TEST(test_grid_add_def)
 }
 END_TEST
 
+START_TEST(test_grid_set_attachprop)
+{
+    FrameworkElement *pFe = grid_create_ex(0, 0, 10, 10);
+    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 20, L"test", L"", NULL);
+    grid_set_col(pFe, pBtnFe, 1);
+    ck_assert_int_eq(grid_get_col(pFe, pBtnFe), 1);
+    ck_assert_int_eq(grid_get_row(pFe, pBtnFe), 0);
+
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 10, 20, L"test", L"", NULL);
+    grid_set_row(pFe, pBtnFe2, 2);
+    ck_assert_int_eq(grid_get_col(pFe, pBtnFe2), 0);
+    ck_assert_int_eq(grid_get_row(pFe, pBtnFe2), 2);
+
+    grid_set_colspan(pFe, pBtnFe, 3);
+    ck_assert_int_eq(grid_get_colspan(pFe, pBtnFe), 3);
+    ck_assert_int_eq(grid_get_rowspan(pFe, pBtnFe), 1);
+    grid_set_rowspan(pFe, pBtnFe2, 3);
+    ck_assert_int_eq(grid_get_colspan(pFe, pBtnFe2), 1);
+    ck_assert_int_eq(grid_get_rowspan(pFe, pBtnFe2), 3);
+
+    grid_set_col(pFe, pBtnFe, 2);
+    ck_assert_int_eq(grid_get_col(pFe, pBtnFe), 2);
+    grid_set_row(pFe, pBtnFe2, 3);
+    ck_assert_int_eq(grid_get_row(pFe, pBtnFe2), 3);
+}
+END_TEST
+
 Suite* make_add_suit(void)
 {
     Suite *s = suite_create("ngf");
@@ -148,6 +175,7 @@ Suite* make_add_suit(void)
     tcase_add_test(tc_grid, test_grid_size);
     tcase_add_test(tc_grid, test_grid_size2);
     tcase_add_test(tc_grid, test_grid_add_def);
+    tcase_add_test(tc_grid, test_grid_set_attachprop);
     suite_add_tcase(s, tc_grid);
 
     return s;

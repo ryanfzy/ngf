@@ -22,7 +22,12 @@ void fe_set_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pVal
             iSize = sizeof(int);
 
         if (iSize > 0)
-            dict_add(&(pFe->attachedProps), (char*)(&pInfo), sizeof(AttachedPropertyInfo*), pValue, iSize);
+        {
+            if (dict_contains(&(pFe->attachedProps), (char*)(&pInfo), sizeof(AttachedPropertyInfo*)))
+                dict_set(&(pFe->attachedProps), (char*)(&pInfo), sizeof(AttachedPropertyInfo*), pValue, iSize);
+            else
+                dict_add(&(pFe->attachedProps), (char*)(&pInfo), sizeof(AttachedPropertyInfo*), pValue, iSize);
+        }
     }
 }
 
@@ -32,14 +37,14 @@ bool fe_get_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pVal
     if (pFe != NULL && pInfo != NULL && pValue != NULL)
     {
         char *pVal = dict_get(&(pFe->attachedProps), (char*)(&pInfo), sizeof(AttachedPropertyInfo*));
-        if (pVal != NULL)
+        if (pInfo->eType == PropertyType_Int)
         {
-            if (pInfo->eType == PropertyType_Int)
-            {
+            if (pVal != NULL)
                 *(int*)pValue = *((int*)pVal);
-                bResult = true;
-            }
+            else
+                *(int*)pValue = *((int*)(pInfo->pDefaultValue));
         }
+        bResult = true;
     }
     return bResult;
 }
