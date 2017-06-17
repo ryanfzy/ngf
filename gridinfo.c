@@ -65,6 +65,74 @@ FrameworkElement* grid_get_child(FrameworkElement *pGrid, unsigned int iPos)
     return NULL;
 }
 
+int _grid_get_height(FrameworkElement *pGrid)
+{
+    int height = 0;
+    if (pGrid != NULL)
+    {
+        int iRow = 0;
+        do
+        {
+            RowDefinition *pRowDef = grid_get_rowdef(pGrid, iRow);
+            if (pRowDef != NULL && pRowDef->height != SIZE_AUTO)
+                height += pRowDef->height;
+            else
+            {
+                int rowHeight = 0;
+                for (int iChild = 0; iChild < grid_get_children_count(pGrid); iChild++)
+                {
+                    FrameworkElement *pChild = grid_get_child(pGrid, iChild);
+                    if (pChild != NULL)
+                    {
+                        if (iRow == grid_get_row(pGrid, pChild))
+                        {
+                            FeSize childSize = fe_get_size(pChild);
+                            rowHeight = ymax(rowHeight, childSize.height);
+                        }
+                    }
+                }
+                height += rowHeight;
+            }
+            iRow++;
+        } while (iRow < grid_get_rowdef_count(pGrid));
+    }
+    return height;
+}
+
+int _grid_get_width(FrameworkElement *pGrid)
+{
+    int width = 0;
+    if (pGrid != NULL)
+    {
+        int iCol = 0;
+        do
+        {
+            ColumnDefinition *pColDef = grid_get_coldef(pGrid, iCol);
+            if (pColDef != NULL && pColDef->width != SIZE_AUTO)
+                width += pColDef->width;
+            else
+            {
+                int colWidth = 0;
+                for (int iChild = 0; iChild < grid_get_children_count(pGrid); iChild++)
+                {
+                    FrameworkElement *pChild = grid_get_child(pGrid, iChild);
+                    if (pChild != NULL)
+                    {
+                        if (iCol == grid_get_col(pGrid, pChild))
+                        {
+                            FeSize childSize = fe_get_size(pChild);
+                            colWidth = ymax(colWidth, childSize.width);
+                        }
+                    }
+                }
+                width += colWidth;
+            }
+            iCol++;
+        } while (iCol < grid_get_coldef_count(pGrid));
+    }
+    return width;
+}
+
 FeSize grid_get_size(FrameworkElement *pGrid)
 {
     FeSize feSize = { 0, 0 };
@@ -73,66 +141,11 @@ FeSize grid_get_size(FrameworkElement *pGrid)
     {
         feSize = vinfo_get_size(&(pInfo->layoutInfo.visualInfo));
 
-        bool bAutoWidth = feSize.width == SIZE_AUTO;
-        bool bAutoHeight = feSize.height == SIZE_AUTO;
-        if (!bAutoWidth && !bAutoHeight)
-            return feSize;
+        if (feSize.height == SIZE_AUTO)
+            feSize.height = _grid_get_height(pGrid);
 
-        if (bAutoHeight)
-        {
-            feSize.height = 0;
-            for (int iRow = 0; iRow <= grid_get_rowdef_count(pGrid); iRow++)
-            {
-                RowDefinition *pRowDef = grid_get_rowdef(pGrid, iRow);
-                if (pRowDef != NULL && pRowDef->height != SIZE_AUTO)
-                    feSize.height += pRowDef->height;
-                else
-                {
-                    int height = 0;
-                    for (int iChild = 0; iChild < grid_get_children_count(pGrid); iChild++)
-                    {
-                        FrameworkElement *pChild = grid_get_child(pGrid, iChild);
-                        if (pChild != NULL)
-                        {
-                            if (iRow == grid_get_row(pGrid, pChild))
-                            {
-                                FeSize childSize = fe_get_size(pChild);
-                                height = ymax(height, childSize.height);
-                            }
-                        }
-                    }
-                    feSize.height += height;
-                }
-            }
-        }
-
-        if (bAutoWidth)
-        {
-            feSize.width = 0;
-            for (int iCol = 0; iCol <= grid_get_coldef_count(pGrid); iCol++)
-            {
-                ColumnDefinition *pColDef = grid_get_coldef(pGrid, iCol);
-                if (pColDef != NULL && pColDef->width != SIZE_AUTO)
-                    feSize.width += pColDef->width;
-                else
-                {
-                    int width = 0;
-                    for (int iChild = 0; iChild < grid_get_children_count(pGrid); iChild++)
-                    {
-                        FrameworkElement *pChild = grid_get_child(pGrid, iChild);
-                        if (pChild != NULL)
-                        {
-                            if (iCol == grid_get_col(pGrid, pChild))
-                            {
-                                FeSize childSize = fe_get_size(pChild);
-                                width = ymax(width, childSize.width);
-                            }
-                        }
-                    }
-                    feSize.width = width;
-                }
-            }
-        }
+        if (feSize.width == SIZE_AUTO)
+            feSize.width = _grid_get_width(pGrid);
     }
     return feSize;
 }
