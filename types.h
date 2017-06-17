@@ -11,6 +11,7 @@ static const int FE_TVITEM = 7;
 static const int FE_STACKPANEL = 8;
 
 static const int SIZE_AUTO = -1;
+static const int SIZE_UNDEFINED = -2;
 
 typedef enum _properyType
 {

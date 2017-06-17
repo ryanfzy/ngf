@@ -8,9 +8,32 @@ FrameworkElement* create_fe(int iFeType)
     return pFe;
 }
 
-void InitLayoutInfo(LayoutInfo *pLayoutInfo)
+void fe_free(FrameworkElement *pFe)
 {
-    slist_init(&(pLayoutInfo->children));
+    if (pFe != NULL)
+    {
+        // currently all info will free pElement
+        //free(pFe->pElement);
+        free(pFe);
+    }
+}
+
+void linfo_init(LayoutInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_init(&(pInfo->visualInfo));
+        slist_init(&(pInfo->children));
+    }
+}
+
+void linfo_destroy(LayoutInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        slist_destroy(&(pInfo->children));
+        vinfo_destroy(&(pInfo->visualInfo));
+    }
 }
 
 void fe_set_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pValue)
@@ -61,6 +84,24 @@ FrameworkElement* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos)
     if (pInfo != NULL && iPos < linfo_get_children_count(pInfo))
         return *(FrameworkElement**)slist_get(&(pInfo->children), iPos);
     return NULL;
+}
+
+void vinfo_init(VisualInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        pInfo->x = 0;
+        pInfo->y = 0;
+        pInfo->width = SIZE_AUTO;
+        pInfo->height = SIZE_AUTO;
+        pInfo->actualWidth = 0;
+        pInfo->actualHeight = 0;
+    }
+}
+
+void vinfo_destroy(VisualInfo *pInfo)
+{
+    // no pointer to free
 }
 
 FeSize vinfo_get_size(VisualInfo *pInfo)

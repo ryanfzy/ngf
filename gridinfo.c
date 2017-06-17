@@ -19,7 +19,7 @@ FrameworkElement* grid_create()
     FrameworkElement *pGridFe = create_fe(FE_GRID);
     
     GridInfo *pGridInfo = malloc(sizeof(GridInfo));
-    InitLayoutInfo(&(pGridInfo->layoutInfo));
+    linfo_init(&(pGridInfo->layoutInfo));
     attachedpropinfo_init_int(&(pGridInfo->ColProperty), 0);
     attachedpropinfo_init_int(&(pGridInfo->RowProperty), 0);
     attachedpropinfo_init_int(&(pGridInfo->ColSpanProperty), 1);
@@ -33,7 +33,19 @@ FrameworkElement* grid_create()
 
 void grid_free(FrameworkElement *pFe)
 {
-    // todo
+    GridInfo *pInfo = _grid_getinfo(pFe);
+    if (pInfo != NULL)
+    {
+        linfo_destroy(&(pInfo->layoutInfo));
+        attachedpropinfo_destroy(&(pInfo->ColProperty));
+        attachedpropinfo_destroy(&(pInfo->RowProperty));
+        attachedpropinfo_destroy(&(pInfo->ColSpanProperty));
+        attachedpropinfo_destroy(&(pInfo->RowSpanProperty));
+        slist_destroy(&(pInfo->RowDefinitions));
+        slist_destroy(&(pInfo->ColumnDefinitions));
+        free(pInfo);
+        fe_free(pFe);
+    }
 }
 
 FrameworkElement* grid_create_ex(int x, int y, int width, int height)

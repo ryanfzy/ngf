@@ -29,6 +29,8 @@ typedef struct _visualInfo
     int y;
     int width;
     int height;
+    int actualWidth;
+    int actualHeight;
 } VisualInfo;
 
 typedef struct _layoutInfo
@@ -55,14 +57,18 @@ typedef struct _decoratorInfo
 } DecoratorInfo;
 
 FrameworkElement* create_fe(int iFeType);
-void InitLayoutInfo(LayoutInfo *pInfo);
+void fe_free(FrameworkElement *pFe);
 
 void fe_set_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pValue);
 bool fe_get_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pValue);
 
+void linfo_init(LayoutInfo *pInfo);
+void linfo_destroy(LayoutInfo *pInfo);
 int linfo_get_children_count(LayoutInfo *pInfo);
 FrameworkElement* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos);
 
+void vinfo_init(VisualInfo *pInfo);
+void vinfo_destroy(VisualInfo *pInfo);
 FeSize vinfo_get_size(VisualInfo *pInfo);
 
 #endif
