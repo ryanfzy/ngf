@@ -36,6 +36,16 @@ void linfo_destroy(LayoutInfo *pInfo)
     }
 }
 
+bool linfo_add_child(LayoutInfo *pInfo, FrameworkElement *pChildFe)
+{
+    if (pInfo != NULL && pChildFe)
+    {
+        slist_push(&(pInfo->children), (char*)pChildFe, sizeof(pChildFe));
+        return true;
+    }
+    return false;
+}
+
 void fe_set_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pValue)
 {
     if (pFe != NULL && pInfo != NULL && pValue != NULL)
@@ -113,4 +123,33 @@ FeSize vinfo_get_size(VisualInfo *pInfo)
         size.height = pInfo->height;
     }
     return size;
+}
+
+void vinfo_set_size(VisualInfo *pInfo, FeSize size)
+{
+    if (pInfo != NULL)
+    {
+        pInfo->actualWidth = size.width;
+        pInfo->actualHeight = size.height;
+    }
+}
+
+FePos vinfo_get_pos(VisualInfo *pInfo)
+{
+    FePos pos = {0, 0};
+    if (pInfo != NULL)
+    {
+        pos.x = pInfo->x;
+        pos.y = pInfo->y;
+    }
+    return pos;
+}
+
+void vinfo_set_pos(VisualInfo *pInfo, FePos pos)
+{
+    if (pInfo != NULL)
+    {
+        pInfo->x = pos.x;
+        pInfo->y = pos.y;
+    }
 }

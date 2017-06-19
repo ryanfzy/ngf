@@ -16,6 +16,12 @@ typedef struct _feSize
     int height;
 } FeSize;
 
+typedef struct _fePos
+{
+    int x;
+    int y;
+} FePos;
+
 typedef struct _frameworkElement
 {
     int iType;
@@ -64,11 +70,15 @@ bool fe_get_value(FrameworkElement *pFe, AttachedPropertyInfo *pInfo, char *pVal
 
 void linfo_init(LayoutInfo *pInfo);
 void linfo_destroy(LayoutInfo *pInfo);
+bool linfo_add_child(LayoutInfo *pInfo, FrameworkElement *pChildFe);
 int linfo_get_children_count(LayoutInfo *pInfo);
 FrameworkElement* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos);
 
 void vinfo_init(VisualInfo *pInfo);
 void vinfo_destroy(VisualInfo *pInfo);
 FeSize vinfo_get_size(VisualInfo *pInfo);
+void vinfo_set_size(VisualInfo *pInfo, FeSize feSize);
+void vinfo_set_pos(VisualInfo *pInfo, FePos fePos);
+FePos vinfo_get_pos(VisualInfo *pInfo);
 
 #endif
