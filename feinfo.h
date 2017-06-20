@@ -73,8 +73,10 @@ void linfo_destroy(LayoutInfo *pInfo);
 bool linfo_add_child(LayoutInfo *pInfo, FrameworkElement *pChildFe);
 int linfo_get_children_count(LayoutInfo *pInfo);
 FrameworkElement* linfo_get_child(LayoutInfo *pInfo, unsigned int iPos);
+bool linfo_has_child(LayoutInfo *pInfo, FrameworkElement *pChildFe);
 
 void vinfo_init(VisualInfo *pInfo);
+void vinfo_init_ex(VisualInfo *pInfo, int x, int y, int width, int height);
 void vinfo_destroy(VisualInfo *pInfo);
 FeSize vinfo_get_size(VisualInfo *pInfo);
 void vinfo_set_size(VisualInfo *pInfo, FeSize feSize);

@@ -1,5 +1,6 @@
 #include "feinfo.h"
 #include <string.h>
+#include "lib/utilities.h"
 
 FrameworkElement* create_fe(int iFeType)
 {
@@ -40,8 +41,19 @@ bool linfo_add_child(LayoutInfo *pInfo, FrameworkElement *pChildFe)
 {
     if (pInfo != NULL && pChildFe)
     {
-        slist_push(&(pInfo->children), (char*)pChildFe, sizeof(pChildFe));
+        slist_push(&(pInfo->children), (char*)(&pChildFe), sizeof(pChildFe));
         return true;
+    }
+    return false;
+}
+
+
+bool linfo_has_child(LayoutInfo *pInfo, FrameworkElement *pChildFe)
+{
+    for (int iChild = 0; iChild < slist_get_count(&(pInfo->children)); iChild++)
+    {
+        if (*((FrameworkElement**)slist_get(&(pInfo->children), iChild)) == pChildFe)
+            return true;
     }
     return false;
 }
@@ -119,8 +131,8 @@ FeSize vinfo_get_size(VisualInfo *pInfo)
     FeSize size = {0, 0};
     if (pInfo != NULL)
     {
-        size.width = pInfo->width;
-        size.height = pInfo->height;
+        size.width = pInfo->actualWidth;
+        size.height = pInfo->actualHeight;
     }
     return size;
 }
@@ -153,3 +165,17 @@ void vinfo_set_pos(VisualInfo *pInfo, FePos pos)
         pInfo->y = pos.y;
     }
 }
+
+void vinfo_init_ex(VisualInfo *pInfo, int x, int y, int width, int height)
+{
+    if (pInfo != NULL)
+    {
+        pInfo->x = x;
+        pInfo->y = y;
+        pInfo->width = width;
+        pInfo->actualWidth = ymax(width, 0);
+        pInfo->height = height;
+        pInfo->actualHeight = ymax(height, 0);
+    }
+}
+
