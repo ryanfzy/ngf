@@ -21,20 +21,26 @@ typedef struct _gridInfo
 typedef struct _rowDefinition
 {
     int height;
+    FrameworkElement *pFe;
 } RowDefinition;
 
 typedef struct _columnDefinition
 {
     int width;
+    FrameworkElement *pFe;
 } ColumnDefinition;
 
 FrameworkElement* grid_create();
 FrameworkElement* grid_create_ex(int x, int y, int width, int height);
 void grid_free(FrameworkElement *pFe);
 
+void grid_add_child(FrameworkElement *pGridFe, FrameworkElement *pChildFe);
 int grid_get_children_count(FrameworkElement *pGrid);
 FrameworkElement* grid_get_child(FrameworkElement *pGrid, unsigned int iPos);
+
 FeSize grid_get_size(FrameworkElement *pGrid);
+
+void grid_set_pos(FrameworkElement *pFe, int x, int y);
 
 void grid_add_rowdef(FrameworkElement *pGrid, RowDefinition *pRowDef);
 void grid_add_coldef(FrameworkElement *pGrid, ColumnDefinition *pColDef);
@@ -56,5 +62,8 @@ int grid_get_row(FrameworkElement *pGrid, FrameworkElement *pChild);
 
 void grid_set_rowspan(FrameworkElement *pGrid, FrameworkElement *pChild, int iRowSpan);
 int grid_get_rowspan(FrameworkElement *pGrid, FrameworkElement *pChild);
+
+void rowdef_set_height(RowDefinition *pRowDef, int height);
+void coldef_set_width(ColumnDefinition *pColDef, int width);
 
 #endif
