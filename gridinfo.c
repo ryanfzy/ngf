@@ -99,8 +99,12 @@ static void _grid_invalidate(FrameworkElement *pFe)
                 FrameworkElement *pChildFe = grid_get_child(pFe, iChild);
                 if (pChildFe != NULL)
                 {
-                    if (iRowCol == grid_get_row(pFe, pChildFe) && iRowCol == grid_get_col(pFe, pChildFe))
-                        fe_set_pos(pChildFe, iChildX, iChildY);
+                    FePos pos = fe_get_pos(pFe);
+                    if (iRowCol == grid_get_row(pFe, pChildFe))
+                        pos.y = iChildY;
+                    if (iRowCol == grid_get_col(pFe, pChildFe))
+                        pos.x = iChildX;
+                    fe_set_pos(pChildFe, pos);
                 }
             }
 
@@ -204,14 +208,20 @@ FeSize grid_get_size(FrameworkElement *pGrid)
     return size;
 }
 
-void grid_set_pos(FrameworkElement *pFe, int x, int y)
+FePos grid_get_pos(FrameworkElement *pFe)
+{
+    FePos pos = {0, 0};
+    GridInfo *pInfo = _grid_getinfo(pFe);
+    if (pInfo != NULL)
+        pos = vinfo_get_pos(&(pInfo->layoutInfo.visualInfo));
+    return pos;
+}
+
+void grid_set_pos(FrameworkElement *pFe, FePos pos)
 {
     GridInfo *pInfo = _grid_getinfo(pFe);
     if (pInfo != NULL)
-    {
-        FePos pos = {x, y};
         vinfo_set_pos(&(pInfo->layoutInfo.visualInfo), pos);
-    }
 }
 
 void grid_add_rowdef(FrameworkElement *pGrid, RowDefinition *pRowDef)

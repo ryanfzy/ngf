@@ -40,7 +40,8 @@ FrameworkElement* grid_get_child(FrameworkElement *pGrid, unsigned int iPos);
 
 FeSize grid_get_size(FrameworkElement *pGrid);
 
-void grid_set_pos(FrameworkElement *pFe, int x, int y);
+FePos grid_get_pos(FrameworkElement *pFe);
+void grid_set_pos(FrameworkElement *pFe, FePos);
 
 void grid_add_rowdef(FrameworkElement *pGrid, RowDefinition *pRowDef);
 void grid_add_coldef(FrameworkElement *pGrid, ColumnDefinition *pColDef);

@@ -43,3 +43,19 @@ FeSize button_get_size(FrameworkElement *pBtn)
         size = vinfo_get_size(&(pInfo->controlInfo.visualInfo));
     return size;
 }
+
+void button_set_pos(FrameworkElement *pFe, FePos pos)
+{
+    ButtonInfo *pInfo = _button_getinfo(pFe);
+    if (pInfo != NULL)
+        vinfo_set_pos(&(pInfo->controlInfo.visualInfo), pos);
+}
+
+FePos button_get_pos(FrameworkElement *pFe)
+{
+    FePos pos = {0, 0};
+    ButtonInfo *pInfo = _button_getinfo(pFe);
+    if (pInfo != NULL)
+        pos = vinfo_get_pos(&(pInfo->controlInfo.visualInfo));
+    return pos;
+}

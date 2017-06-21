@@ -82,19 +82,38 @@ FeSize fe_get_size(FrameworkElement *pFe)
     return size;
 }
 
-void fe_set_pos(FrameworkElement *pFe, int x, int y)
+void fe_set_pos(FrameworkElement *pFe, FePos pos)
 {
     if (pFe != NULL && pFe->pElement != NULL)
     {
         if (pFe->iType == FE_GRID)
-            grid_set_pos(pFe, x, y);
-        /*
+            grid_set_pos(pFe, pos);
         else if (pFe->iType == FE_BUTTON)
-            size =  button_get_size(pFe);
+            button_set_pos(pFe, pos);
+        /*
         else if (pFe->iType == FE_TEXTBLOCK)
             size = textblock_get_size(pFe);
         else if (pFe->iType == FE_BORDER)
             size = border_get_size(pFe);
             */
     }
+}
+
+FePos fe_get_pos(FrameworkElement *pFe)
+{
+    FePos pos = {0, 0};
+    if (pFe != NULL && pFe->pElement != NULL)
+    {
+        if (pFe->iType == FE_GRID)
+            pos = grid_get_pos(pFe);
+        else if (pFe->iType == FE_BUTTON)
+            pos = button_get_pos(pFe);
+        /*
+        else if (pFe->iType == FE_TEXTBLOCK)
+            size = textblock_get_size(pFe);
+        else if (pFe->iType == FE_BORDER)
+            size = border_get_size(pFe);
+            */
+    }
+    return pos;
 }
