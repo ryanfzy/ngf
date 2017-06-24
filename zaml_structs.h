@@ -13,7 +13,7 @@
 #include "btninfo.h"
 #include "borderinfo.h"
 
-bool zaml_add_child(FrameworkElement *pParentFe, FrameworkElement *pChildFe);
+bool fe_add_child(FrameworkElement *pFe, FrameworkElement *pChildFe);
 int zaml_get_children_count(FrameworkElement *pFe);
 FrameworkElement* zaml_get_child(FrameworkElement *pFe, int iPos);
 

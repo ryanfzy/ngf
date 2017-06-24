@@ -31,7 +31,7 @@ START_TEST(test_grid_add_child)
     ck_assert_int_eq(grid_get_children_count(pFe), 0);
 
     FrameworkElement *pFe2 = grid_create_ex(0, 0, 20, 20);
-    zaml_add_child(pFe, pFe2);
+    fe_add_child(pFe, pFe2);
     ck_assert_int_eq(grid_get_children_count(pFe), 1);
 
     FrameworkElement *pFe3 = grid_get_child(pFe, 0);

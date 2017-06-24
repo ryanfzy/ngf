@@ -26,16 +26,13 @@ static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
     return pLayoutInfo;
 }
 
-bool zaml_add_child(FrameworkElement *pParentFe, FrameworkElement *pChildFe)
+bool fe_add_child(FrameworkElement *pFe, FrameworkElement *pChildFe)
 {
-    if (pParentFe != NULL && pChildFe != NULL)
+    if (pFe != NULL && pChildFe != NULL)
     {
-        LayoutInfo *pLayoutInfo = get_layoutinfo(pParentFe);
-        if (pLayoutInfo != NULL)
-        {
-            slist_push(&(pLayoutInfo->children), (char*)(&pChildFe), sizeof(pChildFe));
-            return true;
-        }
+        if (pFe->iType == FE_GRID)
+            grid_add_child(pFe, pChildFe);
+        return true;
     }
     return false;
 }
