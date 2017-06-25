@@ -198,8 +198,11 @@ START_TEST(test_grid_size4_pos)
     grid_add_child(pFe, pBtnFe);
 
     ButtonInfo *pBtnInfo = (ButtonInfo*)(pBtnFe->pElement);
-    ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.x, 0);
-    ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.y, 0);
+    FePos pos = fe_get_pos(pBtnFe);
+    //ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.x, 0);
+    ck_assert_int_eq(pos.x, 0);
+    //ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.y, 0);
+    ck_assert_int_eq(pos.y, 0);
 
     ColumnDefinition colDef;
     colDef.width = SIZE_AUTO;
@@ -231,8 +234,11 @@ START_TEST(test_grid_size4_pos)
     grid_set_col(pFe, pBtnFe2, 1);
 
     pBtnInfo = (ButtonInfo*)(pBtnFe2->pElement);
-    ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.x, 10);
-    ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.y, 0);
+    pos = fe_get_pos(pBtnFe2);
+    //ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.x, 10);
+    ck_assert_int_eq(pos.x, 10);
+    //ck_assert_int_eq(pBtnInfo->controlInfo.visualInfo.y, 0);
+    ck_assert_int_eq(pos.y, 0);
 
     size = grid_get_size(pFe);
     ck_assert_int_eq(size.width, 30);
@@ -261,6 +267,47 @@ START_TEST(test_grid_size4_pos)
 }
 END_TEST
 
+START_TEST(test_grid_size5)
+{
+    FrameworkElement *pGridFe = grid_create_ex(0, 0, SIZE_AUTO, SIZE_AUTO);
+    ColumnDefinition coldef;
+    coldef.width = SIZE_AUTO;
+    grid_add_coldef(pGridFe, &coldef);
+    grid_add_coldef(pGridFe, &coldef);
+
+    RowDefinition rowdef;
+    rowdef.height = SIZE_AUTO;
+    grid_add_rowdef(pGridFe, &rowdef);
+    grid_add_rowdef(pGridFe, &rowdef);
+
+    FrameworkElement *pBtnFe1 = button_create_ex(0, 0, 20, 20, L"test1", L"", NULL);
+    grid_set_colspan(pGridFe,pBtnFe1, 2);
+    grid_add_child(pGridFe, pBtnFe1);
+
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 10, 10, L"test2", L"", NULL);
+    grid_set_col(pGridFe, pBtnFe2, 0);
+    grid_set_row(pGridFe, pBtnFe2, 1);
+    grid_add_child(pGridFe, pBtnFe2);
+
+    FePos pos = fe_get_pos(pBtnFe2);
+    ck_assert_int_eq(pos.x, 0);
+    ck_assert_int_eq(pos.y, 20);
+
+    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 15, 15, L"test3", L"", NULL);
+    grid_set_col(pGridFe, pBtnFe3, 1);
+    grid_set_row(pGridFe, pBtnFe3, 1);
+    grid_add_child(pGridFe, pBtnFe3);
+
+    pos = fe_get_pos(pBtnFe3);
+    ck_assert_int_eq(pos.x, 10);
+    ck_assert_int_eq(pos.y, 20);
+
+    FeSize size = grid_get_size(pGridFe);
+    ck_assert_int_eq(size.width, 25);
+    ck_assert_int_eq(size.height, 35);
+}
+END_TEST
+
 Suite* make_add_suit(void)
 {
     Suite *s = suite_create("ngf");
@@ -274,6 +321,7 @@ Suite* make_add_suit(void)
     tcase_add_test(tc_grid, test_grid_add_def);
     tcase_add_test(tc_grid, test_grid_set_attachprop);
     tcase_add_test(tc_grid, test_grid_size4_pos);
+    tcase_add_test(tc_grid, test_grid_size5);
     suite_add_tcase(s, tc_grid);
 
     return s;
