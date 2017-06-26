@@ -6,6 +6,7 @@ FrameworkElement* create_fe(int iFeType)
 {
     FrameworkElement *pFe = malloc(sizeof(FrameworkElement));
     pFe->iType = iFeType;
+    dict_init(&(pFe->attachedProps));
     return pFe;
 }
 
