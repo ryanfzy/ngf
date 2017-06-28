@@ -232,3 +232,16 @@ void dinfo_destroy(DecoratorInfo *pInfo)
         vinfo_destroy(&(pInfo->visualInfo));
     }
 }
+
+void dinfo_set_child(DecoratorInfo *pInfo, FrameworkElement *pChildFe)
+{
+    if (pInfo != NULL)
+        pInfo->pChildFe = pChildFe;
+}
+
+FrameworkElement* dinfo_get_child(DecoratorInfo *pInfo)
+{
+    if (pInfo != NULL)
+        return pInfo->pChildFe;
+    return NULL;
+}

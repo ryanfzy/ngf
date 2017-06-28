@@ -44,6 +44,21 @@ void border_free(FrameworkElement *pFe)
     }
 }
 
+void border_set_child(FrameworkElement *pFe, FrameworkElement *pChildFe)
+{
+    BorderInfo *pInfo = _bdr_getinfo(pFe);
+    if (pInfo != NULL)
+        dinfo_set_child(&(pInfo->decoratorInfo), pChildFe);
+}
+
+FrameworkElement* border_get_child(FrameworkElement *pFe)
+{
+    BorderInfo *pInfo = _bdr_getinfo(pFe);
+    if (pInfo != NULL)
+       return dinfo_get_child(&(pInfo->decoratorInfo)); 
+    return NULL;
+}
+
 FeSize border_get_size(FrameworkElement *pFe)
 {
     FeSize size = {0, 0};

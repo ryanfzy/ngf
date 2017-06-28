@@ -91,5 +91,7 @@ void sinfo_destroy(StaticInfo *pInfo);
 
 void dinfo_init(DecoratorInfo *pInfo);
 void dinfo_destroy(DecoratorInfo *pInfo);
+void dinfo_set_child(DecoratorInfo *pInfo, FrameworkElement *pChildFe);
+FrameworkElement* dinfo_get_child(DecoratorInfo *pInfo);
 
 #endif

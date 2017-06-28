@@ -9,6 +9,8 @@ bool fe_add_child(FrameworkElement *pFe, FrameworkElement *pChildFe)
     {
         if (pFe->iType == FE_GRID)
             grid_add_child(pFe, pChildFe);
+        else if (pFe->iType == FE_BORDER)
+            border_set_child(pFe, pChildFe);
         return true;
     }
     return false;

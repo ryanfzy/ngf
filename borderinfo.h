@@ -14,6 +14,9 @@ FrameworkElement* border_create();
 FrameworkElement* border_create_ex(int x, int y, int width, int height);
 void border_free(FrameworkElement *pFe);
 
+void border_set_child(FrameworkElement *pFe, FrameworkElement *pChildFe);
+FrameworkElement* border_get_child(FrameworkElement *pFe);
+
 FeSize border_get_size(FrameworkElement *pFe);
 
 FePos border_get_pos(FrameworkElement *pFe);
