@@ -3,29 +3,6 @@
 #include "zaml_structs.h"
 #include "datacontext.h"
 
-static LayoutInfo* get_layoutinfo(FrameworkElement *pFe)
-{
-    LayoutInfo *pLayoutInfo = NULL;
-    if (pFe->iType == FE_GRID)
-    {
-        GridInfo *pGridInfo = (GridInfo*)(pFe->pElement);
-        pLayoutInfo = &(pGridInfo->layoutInfo);
-    }
-    /*
-    else if (pFe->iType == FE_BORDER)
-    {
-        BorderInfo *pBorderInfo = (BorderInfo*)(pFe->pElement);
-        pLayoutInfo = &(pBorderInfo->layoutInfo);
-    }
-    */
-    else if (pFe->iType == FE_TREEVIEW)
-    {
-        TreeViewInfo *pInfo = (TreeViewInfo*)(pFe->pElement);
-        pLayoutInfo = &(pInfo->layoutInfo);
-    }
-    return pLayoutInfo;
-}
-
 bool fe_add_child(FrameworkElement *pFe, FrameworkElement *pChildFe)
 {
     if (pFe != NULL && pChildFe != NULL)
@@ -41,23 +18,18 @@ int zaml_get_children_count(FrameworkElement *pFe)
 {
     if (pFe != NULL)
     {
-        LayoutInfo *pLayoutInfo = get_layoutinfo(pFe);
-        if (pLayoutInfo != NULL)
-            return slist_get_count(&(pLayoutInfo->children));
+        if (pFe->iType == FE_GRID)
+            return grid_get_children_count(pFe);
     }
     return 0;
 }
 
 FrameworkElement* zaml_get_child(FrameworkElement *pFe, int iPos)
 {
-    if (pFe != NULL)
+    if (pFe != NULL && iPos >= 0)
     {
-        LayoutInfo *pLayoutInfo = get_layoutinfo(pFe);
-        if (pLayoutInfo != NULL)
-        {
-            FrameworkElement **ppFe = (FrameworkElement**)slist_get(&(pLayoutInfo->children), iPos);
-            return *ppFe;
-        }
+        if (pFe->iType == FE_GRID && iPos < grid_get_children_count(pFe))
+            return grid_get_child(pFe, iPos);
     }
     return NULL;
 }
@@ -87,12 +59,10 @@ void fe_set_pos(FrameworkElement *pFe, FePos pos)
             grid_set_pos(pFe, pos);
         else if (pFe->iType == FE_BUTTON)
             button_set_pos(pFe, pos);
-        /*
         else if (pFe->iType == FE_TEXTBLOCK)
-            size = textblock_get_size(pFe);
+            textblock_set_pos(pFe, pos);
         else if (pFe->iType == FE_BORDER)
-            size = border_get_size(pFe);
-            */
+            border_set_pos(pFe, pos);
     }
 }
 
@@ -105,12 +75,10 @@ FePos fe_get_pos(FrameworkElement *pFe)
             pos = grid_get_pos(pFe);
         else if (pFe->iType == FE_BUTTON)
             pos = button_get_pos(pFe);
-        /*
         else if (pFe->iType == FE_TEXTBLOCK)
-            size = textblock_get_size(pFe);
+            pos = textblock_get_pos(pFe);
         else if (pFe->iType == FE_BORDER)
-            size = border_get_size(pFe);
-            */
+            pos = border_get_pos(pFe);
     }
     return pos;
 }

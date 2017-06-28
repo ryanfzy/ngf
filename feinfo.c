@@ -16,6 +16,7 @@ void fe_free(FrameworkElement *pFe)
     {
         // currently all info will free pElement
         //free(pFe->pElement);
+        dict_destroy(&(pFe->attachedProps));
         free(pFe);
     }
 }
@@ -180,3 +181,54 @@ void vinfo_init_ex(VisualInfo *pInfo, int x, int y, int width, int height)
     }
 }
 
+void cinfo_init(ControlInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_init(&(pInfo->visualInfo));
+        pInfo->pChildFe = NULL;
+    }
+}
+
+void cinfo_destroy(ControlInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_destroy(&(pInfo->visualInfo));
+        // don't free child because it doesn't create it
+        // free(pInfo->pChildFe)
+    }
+}
+
+void sinfo_init(StaticInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_init(&(pInfo->visualInfo));
+    }
+}
+
+void sinfo_destroy(StaticInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_destroy(&(pInfo->visualInfo));
+    }
+}
+
+void dinfo_init(DecoratorInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_init(&(pInfo->visualInfo));
+        pInfo->pChildFe = NULL;
+    }
+}
+
+void dinfo_destroy(DecoratorInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        vinfo_destroy(&(pInfo->visualInfo));
+    }
+}

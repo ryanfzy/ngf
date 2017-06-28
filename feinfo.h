@@ -48,7 +48,7 @@ typedef struct _layoutInfo
 typedef struct _controlInfo
 {
     VisualInfo visualInfo;
-    FrameworkElement *pchild;
+    FrameworkElement *pChildFe;
 } ControlInfo;
 
 typedef struct _staticInfo
@@ -82,5 +82,14 @@ FeSize vinfo_get_size(VisualInfo *pInfo);
 void vinfo_set_size(VisualInfo *pInfo, FeSize feSize);
 void vinfo_set_pos(VisualInfo *pInfo, FePos fePos);
 FePos vinfo_get_pos(VisualInfo *pInfo);
+
+void cinfo_init(ControlInfo *pInfo);
+void cinfo_destroy(ControlInfo *pInfo);
+
+void sinfo_init(StaticInfo *pInfo);
+void sinfo_destroy(StaticInfo *pInfo);
+
+void dinfo_init(DecoratorInfo *pInfo);
+void dinfo_destroy(DecoratorInfo *pInfo);
 
 #endif
