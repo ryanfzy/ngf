@@ -6,7 +6,7 @@ FrameworkElement* treeview_create()
     FrameworkElement *pFe = create_fe(FE_TREEVIEW);
 
     TreeViewInfo *pInfo = malloc(sizeof(TreeViewInfo));
-    InitLayoutInfo(&(pInfo->layoutInfo));
+    linfo_init(&(pInfo->layoutInfo));
     pFe->pElement = (char*)pInfo;
 
     return pFe;
