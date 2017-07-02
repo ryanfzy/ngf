@@ -186,6 +186,7 @@ void cinfo_init(ControlInfo *pInfo)
     if (pInfo != NULL)
     {
         vinfo_init(&(pInfo->visualInfo));
+        evt_init(&(pInfo->ClickEvent));
         pInfo->pChildFe = NULL;
     }
 }
@@ -195,8 +196,27 @@ void cinfo_destroy(ControlInfo *pInfo)
     if (pInfo != NULL)
     {
         vinfo_destroy(&(pInfo->visualInfo));
+        evt_destroy(&(pInfo->ClickEvent));
         // don't free child because it doesn't create it
         // free(pInfo->pChildFe)
+    }
+}
+
+void cinfo_sub_evt(ControlInfo *pInfo, EventType eType, EventCallback fnCallback)
+{
+    if (pInfo != NULL)
+    {
+        if (eType == EventType_Click)
+            evt_subscribe(&(pInfo->ClickEvent), fnCallback);
+    }
+}
+
+void cinfo_raise_evt(ControlInfo *pInfo, EventType eType, FrameworkElement *pFe, char *pEvtArg)
+{
+    if (pInfo != NULL)
+    {
+        if (eType == EventType_Click)
+            evt_notify(&(pInfo->ClickEvent), pFe, pEvtArg);
     }
 }
 

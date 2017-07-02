@@ -9,6 +9,7 @@
 #include "datacontext.h"
 #include "types.h"
 #include "attachedproperty.h"
+#include "evtinfo.h"
 
 typedef struct _feSize
 {
@@ -21,13 +22,6 @@ typedef struct _fePos
     int x;
     int y;
 } FePos;
-
-typedef struct _frameworkElement
-{
-    int iType;
-    char *pElement;
-    Dict attachedProps;
-} FrameworkElement;
 
 typedef struct _visualInfo
 {
@@ -48,6 +42,7 @@ typedef struct _layoutInfo
 typedef struct _controlInfo
 {
     VisualInfo visualInfo;
+    EventInfo ClickEvent;
     FrameworkElement *pChildFe;
 } ControlInfo;
 
@@ -85,6 +80,8 @@ FePos vinfo_get_pos(VisualInfo *pInfo);
 
 void cinfo_init(ControlInfo *pInfo);
 void cinfo_destroy(ControlInfo *pInfo);
+void cinfo_sub_evt(ControlInfo *pInfo, EventType eType, EventCallback fnCallback);
+void cinfo_raise_evt(ControlInfo *pInfo, EventType eType, FrameworkElement *pFe, char *pEvtArg);
 
 void sinfo_init(StaticInfo *pInfo);
 void sinfo_destroy(StaticInfo *pInfo);

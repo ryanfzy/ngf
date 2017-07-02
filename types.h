@@ -33,4 +33,9 @@ typedef enum _orientationType
     Orientation_Horizontal,
 } OrientationType;
 
+typedef enum _eventType
+{
+    EventType_Click,
+} EventType;
+
 #endif

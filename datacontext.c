@@ -14,17 +14,19 @@ static size_t len2size(int iLen)
 DataContext* create_datacontext()
 {
     DataContext *pDc = malloc(sizeof(DataContext));
-    pDc->pEvtHandler = NULL;
+    //pDc->pEvtHandler = NULL;
     dict_init(&(pDc->dict));
     return pDc;
 }
 
+/*
 DataContext* create_dc_ex(EventHandler *pEvtHandler)
 {
     DataContext *pDc = create_datacontext();
     pDc->pEvtHandler = pEvtHandler;
     return pDc;
 }
+*/
 
 static void DestroyDcItem(DcItem *pDcItem)
 {
@@ -119,7 +121,7 @@ bool DataContext_set_str(DataContext *pDc, wchar_t *szKey, wchar_t *szStr)
 
             pItem->iDataSize = LEN2SIZE(iLen+1);
 
-            DataContext_update(pDc, szKey);
+            //DataContext_update(pDc, szKey);
             return true;
         }
     }
@@ -150,6 +152,7 @@ size_t DataContext_get_str(DataContext *pDc, wchar_t *szKey, wchar_t **szStr)
     return 0;
 }
 
+/*
 void DataContext_update(DataContext *pDc, wchar_t *szKey)
 {
     if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
@@ -171,6 +174,7 @@ void DataContext_update(DataContext *pDc, wchar_t *szKey)
         }
     }
 }
+*/
 
 void DataContext_observe(DataContext *pDc, wchar_t *szKey, char *pObserver, size_t iObserverSize)
 {

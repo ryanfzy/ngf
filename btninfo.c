@@ -1,25 +1,36 @@
 #include "btninfo.h"
 
-static bool _button_is_valid(FrameworkElement *pBtn)
+static bool _btn_is_valid(FrameworkElement *pBtn)
 {
     return pBtn != NULL && pBtn->iType == FE_BUTTON && pBtn->pElement != NULL;
 }
 
-static ButtonInfo* _button_getinfo(FrameworkElement *pBtn)
+static ButtonInfo* _btn_getinfo(FrameworkElement *pBtn)
 {
-    if (_button_is_valid(pBtn))
+    if (_btn_is_valid(pBtn))
         return (ButtonInfo*)(pBtn->pElement);
     return NULL;
 }
 
+static void _btn_click_evt_callback(FrameworkElement *pFe, char *pClickEventArg)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+    {
+    }
+}
+
 FrameworkElement* button_create()
 {
-    FrameworkElement *pBtnFe = create_fe(FE_BUTTON);
+    FrameworkElement *pFe = create_fe(FE_BUTTON);
 
-    ButtonInfo *pButtonInfo = malloc(sizeof(ButtonInfo));
-    pBtnFe->pElement = (char*)pButtonInfo;
+    ButtonInfo *pInfo = malloc(sizeof(ButtonInfo));
+    cinfo_init(&(pInfo->controlInfo));
+    cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, _btn_click_evt_callback);
 
-    return pBtnFe;
+    pFe->pElement = (char*)pInfo;
+
+    return pFe;
 }
 
 FrameworkElement* button_create_ex(int x, int y, int width, int height, wchar_t *szContent, wchar_t *szCommand, DataContext *pDc)
@@ -30,7 +41,7 @@ FrameworkElement* button_create_ex(int x, int y, int width, int height, wchar_t 
     vinfo_init_ex(&(pButtonInfo->controlInfo.visualInfo), x, y, width, height);
     pButtonInfo->szContent = szContent;
     //pButtonInfo->controlInfo.pDc = pDc;
-    pButtonInfo->szCommand = szCommand;
+    //pButtonInfo->szCommand = szCommand;
 
     return pBtnFe;
 }
@@ -38,7 +49,7 @@ FrameworkElement* button_create_ex(int x, int y, int width, int height, wchar_t 
 FeSize button_get_size(FrameworkElement *pBtn)
 {
     FeSize size = {0, 0};
-    ButtonInfo *pInfo = _button_getinfo(pBtn);
+    ButtonInfo *pInfo = _btn_getinfo(pBtn);
     if (pInfo != NULL)
         size = vinfo_get_size(&(pInfo->controlInfo.visualInfo));
     return size;
@@ -46,7 +57,7 @@ FeSize button_get_size(FrameworkElement *pBtn)
 
 void button_set_pos(FrameworkElement *pFe, FePos pos)
 {
-    ButtonInfo *pInfo = _button_getinfo(pFe);
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL)
         vinfo_set_pos(&(pInfo->controlInfo.visualInfo), pos);
 }
@@ -54,8 +65,32 @@ void button_set_pos(FrameworkElement *pFe, FePos pos)
 FePos button_get_pos(FrameworkElement *pFe)
 {
     FePos pos = {0, 0};
-    ButtonInfo *pInfo = _button_getinfo(pFe);
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL)
         pos = vinfo_get_pos(&(pInfo->controlInfo.visualInfo));
     return pos;
+}
+
+void btn_sub_click_evt(FrameworkElement *pFe, EventCallback fnCallback)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+        cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, fnCallback);
+}
+
+static void _btn_raise_evt(FrameworkElement *pFe, EventType eType, char *pEvtArg)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+        cinfo_raise_evt(&(pInfo->controlInfo), eType, pFe, pEvtArg);
+}
+
+void btn_raise_click_evt(FrameworkElement *pFe)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+    {
+        ClickEventArg arg;
+        _btn_raise_evt(pFe, EventType_Click, (char*)&arg);
+    }
 }

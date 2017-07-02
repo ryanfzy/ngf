@@ -5,6 +5,6 @@
 #include <stdlib.h>
 #include "ngf.h"
 
-EventHandler* create_eventHandler();
+//EventHandler* create_eventHandler();
 
 #endif

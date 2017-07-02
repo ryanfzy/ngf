@@ -84,3 +84,14 @@ FePos fe_get_pos(FrameworkElement *pFe)
     }
     return pos;
 }
+
+/*
+void fe_raise_event(FrameworkElement *pFe, EventType eType)
+{
+    if (pFe != NULL)
+    {
+        if (pFe->iType == FE_BUTTON)
+            button_raise_event(pFe, eType);
+    }
+}
+*/
