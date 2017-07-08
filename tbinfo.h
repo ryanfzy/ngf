@@ -9,13 +9,21 @@
 typedef struct _textBlockInfo
 {
     StaticInfo staticInfo;
-    HorizontalAlignmentType eContentHorizontal;
-    // todo, make it not a pointer
-    PropertyInfo *pTextProperty;
+    PropertyInfo ContentHorizontalProperty;
+    PropertyInfo TextProperty;
 } TextBlockInfo;
 
 FrameworkElement* textblock_create();
-FrameworkElement* textblock_create_ex(int x, int y, int width, int height, PropertyInfo *pTextProp);
+FrameworkElement* textblock_create_ex(int x, int y, int width, int height);
+
+void textblock_free(FrameworkElement *pFe);
+
+void textblock_set_contenthorizontal(FrameworkElement *pFe, HorizontalAlignmentType eType);
+HorizontalAlignmentType textblock_get_contenthorizontal(FrameworkElement *pFe);
+
+void textblock_set_text(FrameworkElement *pFe, wchar_t *szText);
+wchar_t* textblock_get_text(FrameworkElement *pFe);
+void textblock_bind_text(FrameworkElement *pFe, StrItem *pItem);
 
 FeSize textblock_get_size(FrameworkElement *pTb);
 void textblock_set_pos(FrameworkElement *pFe, FePos fePos);

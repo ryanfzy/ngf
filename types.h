@@ -15,13 +15,16 @@ static const int SIZE_UNDEFINED = -2;
 
 typedef enum _properyType
 {
-    PropertyType_Null,
+    PropertyType_NoType,
     PropertyType_Str, 
     PropertyType_Int,
+    PropertyType_Cmd,
+    PropertyType_Binding,
 } PropertyType;
 
 typedef enum _horizontalAlignmentType
 {
+    HorizontalAlignment_NoType,
     HorizontalAlignment_Left,
     HorizontalAlignment_Center,
     HorizontalAlignment_Right,
@@ -36,6 +39,8 @@ typedef enum _orientationType
 typedef enum _eventType
 {
     EventType_Click,
+    EventType_PropertyChanged,
+    EventType_DcItemChanged,
 } EventType;
 
 #endif

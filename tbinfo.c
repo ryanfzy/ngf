@@ -12,27 +12,44 @@ static TextBlockInfo* _tb_getinfo(FrameworkElement *pFe)
     return NULL;
 }
 
+void _tb_init(TextBlockInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        sinfo_init(&(pInfo->staticInfo));
+        propinfo_init_int(&(pInfo->ContentHorizontalProperty), HorizontalAlignment_Left);
+        propinfo_init_str(&(pInfo->TextProperty), NULL);
+    }
+}
+
+void _tb_destroy(TextBlockInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        sinfo_destroy(&(pInfo->staticInfo));
+        propinfo_destroy(&(pInfo->ContentHorizontalProperty));
+        propinfo_destroy(&(pInfo->TextProperty));
+    }
+}
+
 FrameworkElement* textblock_create()
 {
     FrameworkElement *pFe = create_fe(FE_TEXTBLOCK);
 
     TextBlockInfo *pInfo = malloc(sizeof(TextBlockInfo));
-    sinfo_init(&(pInfo->staticInfo));
-    pInfo->eContentHorizontal = HorizontalAlignment_Left;
-    pInfo->pTextProperty = NULL;
+    _tb_init(pInfo);
 
     pFe->pElement = (char*)pInfo;
 
     return pFe;
 }
 
-FrameworkElement* textblock_create_ex(int x, int y, int width, int height, PropertyInfo *pTextProp)
+FrameworkElement* textblock_create_ex(int x, int y, int width, int height)
 {
     FrameworkElement *pFe = textblock_create();
     TextBlockInfo *pInfo = (TextBlockInfo*)(pFe->pElement);
 
     vinfo_init_ex(&(pInfo->staticInfo.visualInfo), x, y, width, height);
-    pInfo->pTextProperty = pTextProp;
 
     return pFe;
 }
@@ -42,11 +59,47 @@ void textblock_free(FrameworkElement *pFe)
     TextBlockInfo *pInfo = _tb_getinfo(pFe);
     if (pInfo != NULL)
     {
-        sinfo_destroy(&(pInfo->staticInfo));
-        free(pInfo->pTextProperty);
+        _tb_destroy(pInfo);
         free(pInfo);
         fe_free(pFe);
     }
+}
+
+void textblock_set_contenthorizontal(FrameworkElement *pFe, HorizontalAlignmentType eType)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL)
+        propinfo_set(&(pInfo->ContentHorizontalProperty), (char*)&eType);
+}
+
+HorizontalAlignmentType textblock_get_contenthorizontal(FrameworkElement *pFe)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL)
+        return (HorizontalAlignmentType)(*propinfo_get(&(pInfo->ContentHorizontalProperty)));
+    return HorizontalAlignment_NoType;
+}
+
+void textblock_set_text(FrameworkElement *pFe, wchar_t *pText)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL)
+        propinfo_set(&(pInfo->TextProperty), (char*)pText);
+}
+
+wchar_t* textblock_get_text(FrameworkElement *pFe)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL)
+        return (wchar_t*)propinfo_get(&(pInfo->TextProperty));
+    return NULL;
+}
+
+void textblock_bind_text(FrameworkElement *pFe, StrItem *pItem)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL && pItem != NULL)
+        propinfo_bind(&(pInfo->TextProperty), &(pItem->item));
 }
 
 FeSize textblock_get_size(FrameworkElement *pTb)

@@ -6,7 +6,6 @@
 #include <wchar.h>
 #include "lib/list.h"
 #include "lib/dict.h"
-#include "datacontext.h"
 #include "types.h"
 #include "attachedproperty.h"
 #include "evtinfo.h"

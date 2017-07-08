@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "zaml_structs.h"
-#include "datacontext.h"
 
 bool fe_add_child(FrameworkElement *pFe, FrameworkElement *pChildFe)
 {
@@ -85,13 +84,13 @@ FePos fe_get_pos(FrameworkElement *pFe)
     return pos;
 }
 
-/*
 void fe_raise_event(FrameworkElement *pFe, EventType eType)
 {
+    /*
     if (pFe != NULL)
     {
         if (pFe->iType == FE_BUTTON)
             button_raise_event(pFe, eType);
     }
+    */
 }
-*/

@@ -14,43 +14,4 @@ typedef struct _frameworkElement
     Dict attachedProps;
 } FrameworkElement;
 
-typedef enum
-{
-    ITEMDATATYPE_STRING,
-    ITEMDATATYPE_FUNC,
-    ITEMDATATYPE_OBJECT,
-} DcItemType;
-
-typedef struct _dataContext
-{
-    //struct _eventHandler *pEvtHandler;
-    Dict dict;
-} DataContext;
-
-/*
-typedef void (*RaiseEvent)(Event *pEvt);
-
-typedef struct _eventHandler
-{
-    RaiseEvent fnRaiseEvent;
-} EventHandler;
-*/
-
-typedef void (*CommandFn)(DataContext*);
-
-typedef struct _dataContextItem
-{
-    char *pData;
-    size_t iDataSize;
-    CommandFn fnCommand;
-    DcItemType eDataType;
-    SList observers;
-} DcItem;
-
-typedef struct _command
-{
-    char *pCmdParemter;
-    CommandFn fnCommand;
-} Command;
-
 #endif

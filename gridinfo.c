@@ -1,5 +1,5 @@
 #include "gridinfo.h"
-#include "lib/utilities.h"
+#include "lib/utils.h"
 #include "zaml_structs.h"
 
 typedef struct _spanInfo

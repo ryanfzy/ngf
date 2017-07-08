@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include "lib/list.h"
-#include "datacontext.h"
 #include "property.h"
 #include "feinfo.h"
 #include "treeviewinfo.h"
@@ -22,6 +21,6 @@ FeSize fe_get_size(FrameworkElement *pFe);
 FePos fe_get_pos(FrameworkElement *pFe);
 void fe_set_pos(FrameworkElement *pFe, FePos pos);
 
-//void fe_raise_event(FrameworkElement *pFe, EventType eType);
+void fe_raise_event(FrameworkElement *pFe, EventType eType);
 
 #endif

@@ -12,11 +12,37 @@ static ButtonInfo* _btn_getinfo(FrameworkElement *pBtn)
     return NULL;
 }
 
-static void _btn_click_evt_callback(FrameworkElement *pFe, char *pClickEventArg)
+static void _btn_click_evt_callback(FrameworkElement *pFe, char *pClickEvtArg)
 {
     ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL)
     {
+        /*
+        CommandFn fnCommand = button_get_command(pFe);
+        if (fnCommand != NULL)
+            fnCommand(pClickEvtArg);
+            */
+    }
+}
+
+static void _btn_init(ButtonInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        cinfo_init(&pInfo->controlInfo);
+        cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, _btn_click_evt_callback);
+        propinfo_init_str(&(pInfo->TextProperty), NULL);
+        propinfo_init_cmd(&(pInfo->CommandProperty), NULL);
+    }
+}
+
+static void _btn_destroy(ButtonInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        cinfo_destroy(&(pInfo->controlInfo));
+        propinfo_destroy(&(pInfo->TextProperty));
+        propinfo_destroy(&(pInfo->CommandProperty));
     }
 }
 
@@ -25,25 +51,63 @@ FrameworkElement* button_create()
     FrameworkElement *pFe = create_fe(FE_BUTTON);
 
     ButtonInfo *pInfo = malloc(sizeof(ButtonInfo));
-    cinfo_init(&(pInfo->controlInfo));
-    cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, _btn_click_evt_callback);
+    _btn_init(pInfo);
 
     pFe->pElement = (char*)pInfo;
 
     return pFe;
 }
 
-FrameworkElement* button_create_ex(int x, int y, int width, int height, wchar_t *szContent, wchar_t *szCommand, DataContext *pDc)
+FrameworkElement* button_create_ex(int x, int y, int width, int height, wchar_t *szContent)
 {
-    FrameworkElement *pBtnFe = button_create();
-    ButtonInfo *pButtonInfo = (ButtonInfo*)(pBtnFe->pElement);
+    FrameworkElement *pFe = button_create();
+    ButtonInfo *pInfo = (ButtonInfo*)(pFe->pElement);
 
-    vinfo_init_ex(&(pButtonInfo->controlInfo.visualInfo), x, y, width, height);
-    pButtonInfo->szContent = szContent;
-    //pButtonInfo->controlInfo.pDc = pDc;
-    //pButtonInfo->szCommand = szCommand;
+    vinfo_init_ex(&(pInfo->controlInfo.visualInfo), x, y, width, height);
+    button_set_text(pFe, szContent);
 
-    return pBtnFe;
+    return pFe;
+}
+
+void button_free(FrameworkElement *pFe)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+    {
+        _btn_destroy(pInfo);
+        free(pInfo);
+        fe_free(pFe);
+    }
+}
+
+void button_set_text(FrameworkElement *pFe, wchar_t *szText)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL && szText != NULL)
+        propinfo_set(&(pInfo->TextProperty), (char*)szText);
+}
+
+CommandFn button_get_command(FrameworkElement *pFe)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+        return (CommandFn)propinfo_get(&(pInfo->CommandProperty));
+    return NULL;
+}
+
+void button_bind_command(FrameworkElement *pFe, CmdItem *pItem)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL && pItem != NULL)
+        propinfo_bind(&(pInfo->CommandProperty), &(pItem->item));
+}
+
+wchar_t* button_get_text(FrameworkElement *pFe)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+        return (wchar_t*)propinfo_get(&(pInfo->TextProperty));
+    return NULL;
 }
 
 FeSize button_get_size(FrameworkElement *pBtn)

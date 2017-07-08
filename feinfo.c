@@ -1,6 +1,6 @@
 #include "feinfo.h"
 #include <string.h>
-#include "lib/utilities.h"
+#include "lib/utils.h"
 
 FrameworkElement* create_fe(int iFeType)
 {

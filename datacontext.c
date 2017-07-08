@@ -19,14 +19,12 @@ DataContext* create_datacontext()
     return pDc;
 }
 
-/*
 DataContext* create_dc_ex(EventHandler *pEvtHandler)
 {
     DataContext *pDc = create_datacontext();
     pDc->pEvtHandler = pEvtHandler;
     return pDc;
 }
-*/
 
 static void DestroyDcItem(DcItem *pDcItem)
 {
@@ -152,7 +150,6 @@ size_t DataContext_get_str(DataContext *pDc, wchar_t *szKey, wchar_t **szStr)
     return 0;
 }
 
-/*
 void DataContext_update(DataContext *pDc, wchar_t *szKey)
 {
     if (dict_contains(&(pDc->dict), SIZEOF(szKey)))
@@ -174,7 +171,6 @@ void DataContext_update(DataContext *pDc, wchar_t *szKey)
         }
     }
 }
-*/
 
 void DataContext_observe(DataContext *pDc, wchar_t *szKey, char *pObserver, size_t iObserverSize)
 {
@@ -192,4 +188,3 @@ void DataContext_run_command(DataContext *pDc, wchar_t *szKey)
     if (pItem != NULL && pItem->eDataType == ITEMDATATYPE_FUNC)
         pItem->fnCommand(pDc);
 }
-

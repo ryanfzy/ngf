@@ -1,119 +1,109 @@
-#include "property.h"
 #include <string.h>
+#include "lib/utils.h"
+#include "property.h"
+#include "dcitem.h"
 
-static PropertyInfo* propinfo_create()
+int _pinfo_get_memsize(PropertyType eType, char *pValue)
 {
-    PropertyInfo *pInfo = malloc(sizeof(PropertyInfo));
-    memset(pInfo, 0, sizeof(PropertyInfo));
-    return pInfo;
+    if (eType == PropertyType_Str)
+        return wstrsize((wchar_t*)pValue);
+    else if (eType == PropertyType_Int)
+        return sizeof(int);
+    else if (eType == PropertyType_Cmd)
+        return sizeof(Command);
+    return 0;
 }
 
-PropertyInfo* propinfo_create_ex(PropertyType eType)
+void _pinfo_init(PropertyInfo *pInfo, PropertyType eType, char *pValue)
 {
-    PropertyInfo *pInfo = propinfo_create();
-    pInfo->eType = eType;
-    return pInfo;
+    if (pInfo != NULL && eType != PropertyType_NoType)
+    {
+        pInfo->eType = eType;
+        if (pValue != NULL)
+        {
+            int iSize = _pinfo_get_memsize(eType, pValue);
+            if (iSize > 0)
+            {
+                pInfo->pValue = malloc(iSize);
+                memset(pInfo->pValue, 0, iSize);
+                memcpy(pInfo->pValue, pValue, iSize);
+            }
+        }
+        else
+            pInfo->pValue = NULL;
+    }
 }
 
-void propinfo_free(PropertyInfo *pInfo)
+void propinfo_init_int(PropertyInfo *pInfo, int iValue)
 {
-    free(pInfo->pBinding);
-    free(pInfo->pValue);
-    free(pInfo);
+    _pinfo_init(pInfo, PropertyType_Int, (char*)&iValue);
 }
+
+void propinfo_init_str(PropertyInfo *pInfo, wchar_t *pValue)
+{
+    _pinfo_init(pInfo, PropertyType_Str, (char*)pValue);
+}
+
+void propinfo_init_cmd(PropertyInfo *pInfo, CommandFn fnCommand)
+{
+    Command command;
+    command.fnCommand = fnCommand;
+    _pinfo_init(pInfo, PropertyType_Cmd, (char*)&command);
+}
+
+void propinfo_destroy(PropertyInfo *pInfo)
+{
+    // if it's a binidng, don't free it
+    if (pInfo != NULL && pInfo->eType != PropertyType_Binding)
+        free(pInfo->pValue);
+}
+
 
 void propinfo_set(PropertyInfo *pInfo, char *pValue)
 {
-    if (pInfo != NULL && pValue != NULL)
-    {
-        if (pInfo->pBinding != NULL)
-            binding_set(pInfo->pBinding, pInfo->eType, pValue);
-        else
-        {
-            size_t iSize = 0;
-            if (pInfo->eType == PropertyType_Str)
-                iSize = (wcslen((wchar_t*)pValue)+1) * sizeof(wchar_t) / sizeof(char);
-            else if (pInfo->eType == PropertyType_Int)
-                iSize = sizeof(int);
-
-            pInfo->pValue = malloc(iSize);
-            memset(pInfo->pValue, 0, iSize);
-            memcpy(pInfo->pValue, pValue, iSize);
-        }
-    }
-}
-
-bool propinfo_get(PropertyInfo *pInfo, char *pValue)
-{
-    bool bResult = false;
     if (pInfo != NULL)
     {
-        if (pInfo->pBinding != NULL)
-            return binding_get(pInfo->pBinding, pInfo->eType, pValue);
-        else if (pInfo->pValue != NULL)
+        char *pOldValue = pInfo->pValue;
+        if (pValue == NULL)
+            pInfo->pValue = NULL;
+        else
         {
-            if (pInfo->eType == PropertyType_Str)
+            size_t iSize = _pinfo_get_memsize(pInfo->eType, pValue);
+            if (iSize > 0)
             {
-                *(wchar_t**)pValue = (wchar_t*)(pInfo->pValue);
-                bResult = true;
+                if (pInfo->eType == PropertyType_Binding)
+                    dcitem_set_value((DcItem*)(pInfo->pValue), pValue, iSize);
+                else
+                {
+                    pInfo->pValue = malloc(iSize);
+                    memset(pInfo->pValue, 0, iSize);
+                    memcpy(pInfo->pValue, pValue, iSize);
+                }
             }
-            else if (pInfo->eType == PropertyType_Int)
-            {
-                *(int*)pValue = *((int*)(pInfo->pValue));
-                bResult = true;
-            }
         }
+        free(pOldValue);
     }
-    return bResult;
 }
 
-void propinfo_set_binding(PropertyInfo *pInfo, BindingInfo *pBinding)
+char* propinfo_get(PropertyInfo *pInfo)
 {
-    if (pInfo != NULL && pBinding != NULL)
-        pInfo->pBinding = pBinding;
-}
-
-void propinfo_observe(PropertyInfo *pInfo, char *pObserver, size_t iObserverSize)
-{
-    if (pInfo != NULL && pInfo->pBinding != NULL && pObserver != NULL && iObserverSize > 0)
-        DataContext_observe(pInfo->pBinding->pDc, pInfo->pBinding->szKey, pObserver, iObserverSize);
-}
-
-BindingInfo* binding_create(wchar_t *szKey, DataContext *pDc)
-{
-    BindingInfo *pBinding = malloc(sizeof(BindingInfo));
-    pBinding->szKey = szKey;
-    pBinding->pDc = pDc;
-    return pBinding;
-}
-
-void binding_set(BindingInfo *pInfo, PropertyType eType, char *pValue)
-{
-    if (pInfo != NULL && pValue != NULL && pInfo->pDc != NULL && pInfo->szKey != NULL && wcslen(pInfo->szKey) > 0)
+    if (pInfo != NULL)
     {
-        if (eType == PropertyType_Str)
-        {
-            wchar_t *pstr = (wchar_t*)pValue;
-            DataContext_set_str(pInfo->pDc, pInfo->szKey, pstr);
-        }
-        else if (eType == PropertyType_Int)
-        {
-            // todo
-        }
+        if (pInfo->eType == PropertyType_Binding)
+            return dcitem_get_value((DcItem*)(pInfo->pValue));
+        else
+            return pInfo->pValue;
     }
+    return NULL;
 }
 
-bool binding_get(BindingInfo *pInfo, PropertyType eType, char *pValue)
+void propinfo_bind(PropertyInfo *pInfo, DcItem *pItem)
 {
-    if (pInfo != NULL && pValue != NULL && pInfo->pDc != NULL && pInfo->szKey != NULL && wcslen(pInfo->szKey) > 0)
+    if (pInfo != NULL && pItem != NULL)
     {
-        if (eType == PropertyType_Str)
-            return DataContext_get_str(pInfo->pDc, pInfo->szKey, (wchar_t**)pValue);
-        else if (eType == PropertyType_Int)
-        {
-            // todo
-        }
+        pInfo->eType = PropertyType_Binding;
+        if (pInfo->pValue != NULL)
+            free(pInfo->pValue);
+        pInfo->pValue = (char*)pItem;
     }
-    return false;
 }
-
