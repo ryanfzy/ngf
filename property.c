@@ -34,6 +34,22 @@ void _pinfo_init(PropertyInfo *pInfo, PropertyType eType, char *pValue)
     }
 }
 
+char* _pinfo_get(PropertyInfo *pInfo)
+{
+    if (pInfo != NULL)
+    {
+        if (pInfo->eType == PropertyType_Cmd)
+        { 
+            Command *pCmd = (Command*)(pInfo->pValue);
+            if (pCmd != NULL)
+                return (char*)(pCmd->fnCommand);
+        }
+        else
+            return pInfo->pValue;
+    }
+    return NULL;
+}
+
 void propinfo_init_int(PropertyInfo *pInfo, int iValue)
 {
     _pinfo_init(pInfo, PropertyType_Int, (char*)&iValue);
@@ -92,7 +108,7 @@ char* propinfo_get(PropertyInfo *pInfo)
         if (pInfo->eType == PropertyType_Binding)
             return dcitem_get_value((DcItem*)(pInfo->pValue));
         else
-            return pInfo->pValue;
+            return _pinfo_get(pInfo);
     }
     return NULL;
 }

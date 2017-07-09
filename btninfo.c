@@ -17,11 +17,9 @@ static void _btn_click_evt_callback(FrameworkElement *pFe, char *pClickEvtArg)
     ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL)
     {
-        /*
         CommandFn fnCommand = button_get_command(pFe);
         if (fnCommand != NULL)
             fnCommand(pClickEvtArg);
-            */
     }
 }
 
