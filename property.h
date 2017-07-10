@@ -17,6 +17,7 @@ typedef struct _propertyInfo
 void propinfo_init_int(PropertyInfo *pInfo, int iValue);
 void propinfo_init_str(PropertyInfo *pInfo, wchar_t *pValue);
 void propinfo_init_cmd(PropertyInfo *pInfo, CommandFn fnCommand);
+void propinfo_init_ptr(PropertyInfo *pInfo, char *pDataPtr);
 void propinfo_destroy(PropertyInfo *pInfo);
 
 void propinfo_set(PropertyInfo *pInfo, char *pValue);

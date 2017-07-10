@@ -11,26 +11,18 @@ int _pinfo_get_memsize(PropertyType eType, char *pValue)
         return sizeof(int);
     else if (eType == PropertyType_Cmd)
         return sizeof(Command);
+    else if (eType == PropertyType_Ptr)
+        return sizeof(char*);
     return 0;
 }
 
 void _pinfo_init(PropertyInfo *pInfo, PropertyType eType, char *pValue)
 {
-    if (pInfo != NULL && eType != PropertyType_NoType)
+    if (pInfo != NULL)
     {
         pInfo->eType = eType;
-        if (pValue != NULL)
-        {
-            int iSize = _pinfo_get_memsize(eType, pValue);
-            if (iSize > 0)
-            {
-                pInfo->pValue = malloc(iSize);
-                memset(pInfo->pValue, 0, iSize);
-                memcpy(pInfo->pValue, pValue, iSize);
-            }
-        }
-        else
-            pInfo->pValue = NULL;
+        pInfo->pValue = NULL;
+        propinfo_set(pInfo, pValue);
     }
 }
 
@@ -44,6 +36,8 @@ char* _pinfo_get(PropertyInfo *pInfo)
             if (pCmd != NULL)
                 return (char*)(pCmd->fnCommand);
         }
+        else if (pInfo->eType == PropertyType_Ptr)
+            return (char*)(*(char**)(pInfo->pValue));
         else
             return pInfo->pValue;
     }
@@ -65,6 +59,11 @@ void propinfo_init_cmd(PropertyInfo *pInfo, CommandFn fnCommand)
     Command command;
     command.fnCommand = fnCommand;
     _pinfo_init(pInfo, PropertyType_Cmd, (char*)&command);
+}
+
+void propinfo_init_ptr(PropertyInfo *pInfo, char *pDataPtr)
+{
+    _pinfo_init(pInfo, PropertyType_Ptr, (char*)&pDataPtr);
 }
 
 void propinfo_destroy(PropertyInfo *pInfo)

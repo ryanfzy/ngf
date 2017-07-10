@@ -35,11 +35,13 @@ char* dcitem_get_value(DcItem *pItem);
 
 void stritem_init(StrItem *pItem);
 void stritem_destroy(StrItem *pItem);
+void stritem_destroy(StrItem *pItem);
 void stritem_set_value(StrItem *pItem, wchar_t *pStr);
-wchar_t* strItem_get_value(StrItem *pItem);
+wchar_t* stritem_get_value(StrItem *pItem);
 void stritem_add_observer(StrItem *pItem, FrameworkElement *pFe);
 
 void cmditem_init(CmdItem *pItem);
+void cmditem_destroy(CmdItem *pItem);
 void cmditem_destroy(CmdItem *pItem);
 void cmditem_set_value(CmdItem *pitem, CommandFn fnCommand);
 CommandFn cmditem_get_value(CmdItem *pItem);

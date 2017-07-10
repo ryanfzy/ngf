@@ -20,6 +20,7 @@ typedef enum _properyType
     PropertyType_Int,
     PropertyType_Cmd,
     PropertyType_Binding,
+    PropertyType_Ptr,
 } PropertyType;
 
 typedef enum _horizontalAlignmentType

@@ -13,6 +13,7 @@ typedef struct _buttonInfo
     ControlInfo controlInfo;
     PropertyInfo TextProperty;
     PropertyInfo CommandProperty;
+    PropertyInfo CommandParameterProperty;
 } ButtonInfo;
 
 typedef struct _clickEventArg
@@ -29,6 +30,9 @@ wchar_t* button_get_text(FrameworkElement *pFe);
 
 CommandFn button_get_command(FrameworkElement *pFe);
 void button_bind_command(FrameworkElement *pFe, CmdItem *pItem);
+
+void button_set_cmdparameter(FrameworkElement *pFe, char *pDataPtr);
+char* button_get_cmdparameter(FrameworkElement *pFe);
 
 FeSize button_get_size(FrameworkElement *pBtn);
 FePos button_get_pos(FrameworkElement *pFe);

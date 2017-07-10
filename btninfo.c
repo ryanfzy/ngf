@@ -19,7 +19,7 @@ static void _btn_click_evt_callback(FrameworkElement *pFe, char *pClickEvtArg)
     {
         CommandFn fnCommand = button_get_command(pFe);
         if (fnCommand != NULL)
-            fnCommand(pClickEvtArg);
+            fnCommand(button_get_cmdparameter(pFe));
     }
 }
 
@@ -31,6 +31,7 @@ static void _btn_init(ButtonInfo *pInfo)
         cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, _btn_click_evt_callback);
         propinfo_init_str(&(pInfo->TextProperty), NULL);
         propinfo_init_cmd(&(pInfo->CommandProperty), NULL);
+        propinfo_init_ptr(&(pInfo->CommandParameterProperty), NULL);
     }
 }
 
@@ -41,6 +42,7 @@ static void _btn_destroy(ButtonInfo *pInfo)
         cinfo_destroy(&(pInfo->controlInfo));
         propinfo_destroy(&(pInfo->TextProperty));
         propinfo_destroy(&(pInfo->CommandProperty));
+        propinfo_destroy(&(pInfo->CommandParameterProperty));
     }
 }
 
@@ -98,6 +100,21 @@ void button_bind_command(FrameworkElement *pFe, CmdItem *pItem)
     ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL && pItem != NULL)
         propinfo_bind(&(pInfo->CommandProperty), &(pItem->item));
+}
+
+void button_set_cmdparameter(FrameworkElement *pFe, char *pDataPtr)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL && pDataPtr != NULL)
+        propinfo_set(&(pInfo->CommandParameterProperty), pDataPtr);
+}
+
+char* button_get_cmdparameter(FrameworkElement *pFe)
+{
+    ButtonInfo *pInfo = _btn_getinfo(pFe);
+    if (pInfo != NULL)
+        return propinfo_get(&(pInfo->CommandParameterProperty));
+    return NULL;
 }
 
 wchar_t* button_get_text(FrameworkElement *pFe)
