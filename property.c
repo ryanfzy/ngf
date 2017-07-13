@@ -22,13 +22,14 @@ void _pinfo_init(PropertyInfo *pInfo, PropertyType eType, char *pValue)
     {
         pInfo->eType = eType;
         pInfo->pValue = NULL;
-        propinfo_set(pInfo, pValue);
+        if (pValue != NULL)
+            propinfo_set(pInfo, pValue);
     }
 }
 
 char* _pinfo_get(PropertyInfo *pInfo)
 {
-    if (pInfo != NULL)
+    if (pInfo != NULL && pInfo->pValue != NULL)
     {
         if (pInfo->eType == PropertyType_Cmd)
         { 
@@ -37,11 +38,34 @@ char* _pinfo_get(PropertyInfo *pInfo)
                 return (char*)(pCmd->fnCommand);
         }
         else if (pInfo->eType == PropertyType_Ptr)
-            return (char*)(*(char**)(pInfo->pValue));
+        {
+            return *((char**)(pInfo->pValue));
+        }
         else
             return pInfo->pValue;
     }
     return NULL;
+}
+
+void _pinfo_set(PropertyInfo *pInfo, char *pValue, size_t iSize)
+{
+    if (pInfo != NULL && pValue != NULL && iSize > 0)
+    {
+        pInfo->pValue = malloc(iSize);
+        memset(pInfo->pValue, 0, iSize);
+        if (pInfo->eType == PropertyType_Cmd)
+        {
+            Command cmd;
+            cmd.fnCommand = (CommandFn)pValue;
+            pValue = (char*)&cmd;
+        }
+        else if (pInfo->eType == PropertyType_Ptr)
+        {
+            char *pPtr = pValue;
+            pValue = (char*)&pPtr;
+        }
+        memcpy(pInfo->pValue, pValue, iSize);
+    }
 }
 
 void propinfo_init_int(PropertyInfo *pInfo, int iValue)
@@ -56,14 +80,12 @@ void propinfo_init_str(PropertyInfo *pInfo, wchar_t *pValue)
 
 void propinfo_init_cmd(PropertyInfo *pInfo, CommandFn fnCommand)
 {
-    Command command;
-    command.fnCommand = fnCommand;
-    _pinfo_init(pInfo, PropertyType_Cmd, (char*)&command);
+    _pinfo_init(pInfo, PropertyType_Cmd, (char*)fnCommand);
 }
 
 void propinfo_init_ptr(PropertyInfo *pInfo, char *pDataPtr)
 {
-    _pinfo_init(pInfo, PropertyType_Ptr, (char*)&pDataPtr);
+    _pinfo_init(pInfo, PropertyType_Ptr, pDataPtr);
 }
 
 void propinfo_destroy(PropertyInfo *pInfo)
@@ -89,11 +111,7 @@ void propinfo_set(PropertyInfo *pInfo, char *pValue)
                 if (pInfo->eType == PropertyType_Binding)
                     dcitem_set_value((DcItem*)(pInfo->pValue), pValue, iSize);
                 else
-                {
-                    pInfo->pValue = malloc(iSize);
-                    memset(pInfo->pValue, 0, iSize);
-                    memcpy(pInfo->pValue, pValue, iSize);
-                }
+                    _pinfo_set(pInfo, pValue, iSize);
             }
         }
         free(pOldValue);

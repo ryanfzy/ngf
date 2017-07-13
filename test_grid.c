@@ -66,7 +66,7 @@ END_TEST
 START_TEST(test_grid_size2)
 {
     FrameworkElement *pFe = grid_create_ex(0, 0, SIZE_AUTO, SIZE_AUTO);
-    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 20, L"test");
     grid_add_child(pFe, pBtnFe);
     FrameworkElement *pChild = zaml_get_child(pFe, 0);
     ck_assert_msg(pBtnFe == pChild, "child is not the same");
@@ -75,26 +75,26 @@ START_TEST(test_grid_size2)
     ck_assert_int_eq(size.width, 10);
     ck_assert_int_eq(size.height, 20);
 
-    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 20, 30, L"test2", L"", NULL);
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 20, 30, L"test2");
     grid_add_child(pFe, pBtnFe2);
     size = grid_get_size(pFe);
     ck_assert_int_eq(size.width, 20);
     ck_assert_int_eq(size.height, 30);
 
-    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 10, 10, L"test3", L"", NULL);
+    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 10, 10, L"test3");
     grid_add_child(pFe, pBtnFe3);
     size = grid_get_size(pFe);
     ck_assert_int_eq(size.width, 20);
     ck_assert_int_eq(size.height, 30);
 
-    FrameworkElement *pBtnFe4 = button_create_ex(0, 0, 40, 20, L"test4", L"", NULL);
+    FrameworkElement *pBtnFe4 = button_create_ex(0, 0, 40, 20, L"test4");
     grid_add_child(pFe, pBtnFe4);
     size = grid_get_size(pFe);
     ck_assert_int_eq(grid_get_children_count(pFe), 4);
     ck_assert_int_eq(size.width, 40);
     ck_assert_int_eq(size.height, 30);
 
-    FrameworkElement *pBtnFe5 = button_create_ex(0, 0, 10, 40, L"test5", L"", NULL);
+    FrameworkElement *pBtnFe5 = button_create_ex(0, 0, 10, 40, L"test5");
     grid_add_child(pFe, pBtnFe5);
     size = grid_get_size(pFe);
     ck_assert_int_eq(size.width, 40);
@@ -105,7 +105,7 @@ END_TEST
 START_TEST(test_grid_size3)
 {
     FrameworkElement *pFe = grid_create_ex(0, 0, 10, SIZE_AUTO);
-    FrameworkElement *pBtnFe = button_create_ex(0, 0, 20, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe = button_create_ex(0, 0, 20, 20, L"test");
     grid_add_child(pFe, pBtnFe);
 
     FeSize size = grid_get_size(pFe);
@@ -118,7 +118,7 @@ START_TEST(test_grid_size3)
     ck_assert_int_eq(size.width, 20);
     ck_assert_int_eq(size.height, 10);
 
-    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 40, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 40, 20, L"test");
     grid_add_child(pFe2, pBtnFe2);
     size = grid_get_size(pFe2);
     ck_assert_int_eq(size.width, 40);
@@ -167,12 +167,12 @@ END_TEST
 START_TEST(test_grid_set_attachprop)
 {
     FrameworkElement *pFe = grid_create_ex(0, 0, 10, 10);
-    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 20, L"test");
     grid_set_col(pFe, pBtnFe, 1);
     ck_assert_int_eq(grid_get_col(pFe, pBtnFe), 1);
     ck_assert_int_eq(grid_get_row(pFe, pBtnFe), 0);
 
-    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 10, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 10, 20, L"test");
     grid_set_row(pFe, pBtnFe2, 2);
     ck_assert_int_eq(grid_get_col(pFe, pBtnFe2), 0);
     ck_assert_int_eq(grid_get_row(pFe, pBtnFe2), 2);
@@ -194,7 +194,7 @@ END_TEST
 START_TEST(test_grid_size4_pos)
 {
     FrameworkElement *pFe = grid_create_ex(0, 0, SIZE_AUTO, SIZE_AUTO);
-    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 10, L"test", L"", NULL);
+    FrameworkElement *pBtnFe = button_create_ex(0, 0, 10, 10, L"test");
     grid_add_child(pFe, pBtnFe);
 
     ButtonInfo *pBtnInfo = (ButtonInfo*)(pBtnFe->pElement);
@@ -228,7 +228,7 @@ START_TEST(test_grid_size4_pos)
 
     pColDef->width = SIZE_AUTO;
     grid_add_coldef(pFe, &colDef);
-    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 20, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 20, 20, L"test");
     grid_add_child(pFe, pBtnFe2);
     grid_set_col(pFe, pBtnFe, 0);
     grid_set_col(pFe, pBtnFe2, 1);
@@ -246,7 +246,7 @@ START_TEST(test_grid_size4_pos)
 
     rowDef.height = SIZE_AUTO;
     grid_add_rowdef(pFe, &rowDef);
-    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 10, 20, L"test", L"", NULL);
+    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 10, 20, L"test");
     grid_add_child(pFe, pBtnFe3);
     grid_set_col(pFe, pBtnFe3, 0);
     grid_set_row(pFe, pBtnFe3, 1);
@@ -280,11 +280,11 @@ START_TEST(test_grid_size5)
     grid_add_rowdef(pGridFe, &rowdef);
     grid_add_rowdef(pGridFe, &rowdef);
 
-    FrameworkElement *pBtnFe1 = button_create_ex(0, 0, 20, 20, L"test1", L"", NULL);
+    FrameworkElement *pBtnFe1 = button_create_ex(0, 0, 20, 20, L"test1");
     grid_set_colspan(pGridFe,pBtnFe1, 2);
     grid_add_child(pGridFe, pBtnFe1);
 
-    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 10, 10, L"test2", L"", NULL);
+    FrameworkElement *pBtnFe2 = button_create_ex(0, 0, 10, 10, L"test2");
     grid_set_col(pGridFe, pBtnFe2, 0);
     grid_set_row(pGridFe, pBtnFe2, 1);
     grid_add_child(pGridFe, pBtnFe2);
@@ -293,7 +293,7 @@ START_TEST(test_grid_size5)
     ck_assert_int_eq(pos.x, 0);
     ck_assert_int_eq(pos.y, 20);
 
-    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 15, 15, L"test3", L"", NULL);
+    FrameworkElement *pBtnFe3 = button_create_ex(0, 0, 15, 15, L"test3");
     grid_set_col(pGridFe, pBtnFe3, 1);
     grid_set_row(pGridFe, pBtnFe3, 1);
     grid_add_child(pGridFe, pBtnFe3);
