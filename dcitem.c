@@ -81,13 +81,13 @@ void stritem_destroy(StrItem *pItem)
         _dcitem_destroy(&(pItem->item));
 }
 
-void stritem_set_value(StrItem *pItem, wchar_t *pStr)
+void stritem_set(StrItem *pItem, wchar_t *pStr)
 {
     if (pItem != NULL)
         dcitem_set_value(&(pItem->item), (char*)pStr, wstrsize(pStr));
 }
 
-wchar_t* stritem_get_value(StrItem *pItem)
+wchar_t* stritem_get(StrItem *pItem)
 {
     if (pItem != NULL)
         return (wchar_t*)dcitem_get_value(&(pItem->item));
@@ -112,7 +112,7 @@ void cmditem_destroy(CmdItem *pItem)
         _dcitem_destroy(&(pItem->item));
 }
 
-void cmditem_set_value(CmdItem *pItem, CommandFn fnCommand)
+void cmditem_set(CmdItem *pItem, CommandFn fnCommand)
 {
     if (pItem != NULL)
     {
@@ -122,7 +122,7 @@ void cmditem_set_value(CmdItem *pItem, CommandFn fnCommand)
     }
 }
 
-CommandFn cmditem_get_value(CmdItem *pItem)
+CommandFn cmditem_get(CmdItem *pItem)
 {
     if (pItem != NULL)
     {
