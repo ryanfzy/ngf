@@ -47,24 +47,31 @@ char* _pinfo_get(PropertyInfo *pInfo)
     return NULL;
 }
 
-void _pinfo_set(PropertyInfo *pInfo, char *pValue, size_t iSize)
+void _pinfo_set(PropertyInfo *pInfo, char *pValue)
 {
-    if (pInfo != NULL && pValue != NULL && iSize > 0)
+    if (pInfo != NULL)
     {
-        pInfo->pValue = malloc(iSize);
-        memset(pInfo->pValue, 0, iSize);
-        if (pInfo->eType == PropertyType_Cmd)
+        if (pInfo->pValue != NULL)
+            free(pInfo->pValue);
+        pInfo->pValue = NULL;
+        size_t iSize = _pinfo_get_memsize(pInfo->eType, pValue);
+        if (iSize > 0)
         {
-            Command cmd;
-            cmd.fnCommand = (CommandFn)pValue;
-            pValue = (char*)&cmd;
+            pInfo->pValue = malloc(iSize);
+            memset(pInfo->pValue, 0, iSize);
+            if (pInfo->eType == PropertyType_Cmd)
+            {
+                Command cmd;
+                cmd.fnCommand = (CommandFn)pValue;
+                pValue = (char*)&cmd;
+            }
+            else if (pInfo->eType == PropertyType_Ptr)
+            {
+                char *pPtr = pValue;
+                pValue = (char*)&pPtr;
+            }
+            memcpy(pInfo->pValue, pValue, iSize);
         }
-        else if (pInfo->eType == PropertyType_Ptr)
-        {
-            char *pPtr = pValue;
-            pValue = (char*)&pPtr;
-        }
-        memcpy(pInfo->pValue, pValue, iSize);
     }
 }
 
@@ -100,21 +107,10 @@ void propinfo_set(PropertyInfo *pInfo, char *pValue)
 {
     if (pInfo != NULL)
     {
-        char *pOldValue = pInfo->pValue;
-        if (pValue == NULL)
-            pInfo->pValue = NULL;
+        if (pInfo->eType == PropertyType_Binding)
+            dcitem_set_value((DcItem*)(pInfo->pValue), pValue);
         else
-        {
-            size_t iSize = _pinfo_get_memsize(pInfo->eType, pValue);
-            if (iSize > 0)
-            {
-                if (pInfo->eType == PropertyType_Binding)
-                    dcitem_set_value((DcItem*)(pInfo->pValue), pValue, iSize);
-                else
-                    _pinfo_set(pInfo, pValue, iSize);
-            }
-        }
-        free(pOldValue);
+            _pinfo_set(pInfo, pValue);
     }
 }
 
@@ -134,9 +130,12 @@ void propinfo_bind(PropertyInfo *pInfo, DcItem *pItem)
 {
     if (pInfo != NULL && pItem != NULL)
     {
-        pInfo->eType = PropertyType_Binding;
-        if (pInfo->pValue != NULL)
-            free(pInfo->pValue);
+        if (pInfo->eType != PropertyType_Binding)
+        {
+            if (pInfo->pValue != NULL)
+                free(pInfo->pValue);
+            pInfo->eType = PropertyType_Binding;
+        }
         pInfo->pValue = (char*)pItem;
     }
 }

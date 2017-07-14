@@ -4,10 +4,20 @@
 #include "types.h"
 #include "lib/utils.h"
 
-static void _dcitem_init(DcItem *pItem)
+static int _dcitem_get_memsize(DcItemType eType, char *pValue)
+{
+    if (eType == DcItemType_Str)
+        return wstrsize((wchar_t*)pValue);
+    else if (eType == DcItemType_Cmd)
+        return sizeof(Command);
+    return 0;
+}
+
+static void _dcitem_init(DcItem *pItem, DcItemType eType)
 {
     if (pItem != NULL)
     {
+        pItem->eType = eType;
         pItem->pData = NULL;
         slist_init(&(pItem->observers));
     }
@@ -44,20 +54,26 @@ static void _dcitem_notify(DcItem *pItem)
     }
 }
 
-void dcitem_set_value(DcItem *pItem, char *pValue, size_t iSize)
+void dcitem_set_value(DcItem *pItem, char *pValue)
 {
     if (pItem != NULL)
     {
-        char *pOldValue = pItem->pData;
-        if (pValue == NULL || iSize < 1)
-            pItem->pData = NULL;
-        else
+        if (pItem->pData != NULL)
+            free(pItem->pData);
+        pItem->pData = NULL;
+        int iSize = _dcitem_get_memsize(pItem->eType, pValue);
+        if (iSize > 0)
         {
             pItem->pData = malloc(iSize);
             memset(pItem->pData, 0, iSize);
+            if (pItem->eType == DcItemType_Cmd)
+            {
+                Command cmd;
+                cmd.fnCommand = (CommandFn)pValue;
+                pValue = (char*)&cmd;
+            }
             memcpy(pItem->pData, pValue, iSize);
         }
-        free(pOldValue);
         _dcitem_notify(pItem);
     }
 }
@@ -65,14 +81,25 @@ void dcitem_set_value(DcItem *pItem, char *pValue, size_t iSize)
 char* dcitem_get_value(DcItem *pItem)
 {
     if (pItem != NULL)
-        return pItem->pData;
+    {
+        if (pItem->eType == DcItemType_Cmd)
+        {
+            if (pItem->pData != NULL)
+            {
+                Command *pCmd = (Command*)pItem->pData;
+                return (char*)(pCmd->fnCommand);
+            }
+        }
+        else
+            return pItem->pData;
+    }
     return NULL;
 }
 
 void stritem_init(StrItem *pItem)
 {
     if (pItem != NULL)
-        _dcitem_init(&(pItem->item));
+        _dcitem_init(&(pItem->item), DcItemType_Str);
 }
 
 void stritem_destroy(StrItem *pItem)
@@ -84,7 +111,7 @@ void stritem_destroy(StrItem *pItem)
 void stritem_set(StrItem *pItem, wchar_t *pStr)
 {
     if (pItem != NULL)
-        dcitem_set_value(&(pItem->item), (char*)pStr, wstrsize(pStr));
+        dcitem_set_value(&(pItem->item), (char*)pStr);
 }
 
 wchar_t* stritem_get(StrItem *pItem)
@@ -103,7 +130,7 @@ void stritem_add_observer(StrItem *pItem, FrameworkElement *pFe)
 void cmditem_init(CmdItem *pItem)
 {
     if (pItem != NULL)
-        _dcitem_init(&(pItem->item));
+        _dcitem_init(&(pItem->item), DcItemType_Cmd);
 }
 
 void cmditem_destroy(CmdItem *pItem)
@@ -115,21 +142,13 @@ void cmditem_destroy(CmdItem *pItem)
 void cmditem_set(CmdItem *pItem, CommandFn fnCommand)
 {
     if (pItem != NULL)
-    {
-        Command sCmd;
-        sCmd.fnCommand = fnCommand;
-        dcitem_set_value(&(pItem->item), (char*)&sCmd, sizeof(Command));
-    }
+        dcitem_set_value(&(pItem->item), (char*)fnCommand);
 }
 
 CommandFn cmditem_get(CmdItem *pItem)
 {
     if (pItem != NULL)
-    {
-        Command *pCmd = (Command*)dcitem_get_value(&(pItem->item));
-        if (pCmd != NULL)
-            return pCmd->fnCommand;
-    }
+        return (CommandFn)dcitem_get_value(&(pItem->item));
     return NULL;
 }
 

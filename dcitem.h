@@ -7,8 +7,16 @@
 #include "lib/list.h"
 #include "ngf.h"
 
+typedef enum _dcItemType
+{
+    DcItemType_NoType,
+    DcItemType_Str,
+    DcItemType_Cmd,
+} DcItemType;
+
 typedef struct _dcItem
 {
+    DcItemType eType;
     char *pData;
     SList observers;
 } DcItem;
@@ -30,7 +38,7 @@ typedef struct _command
     CommandFn fnCommand;
 } Command;
 
-void dcitem_set_value(DcItem *pItem, char *pValue, size_t iSize);
+void dcitem_set_value(DcItem *pItem, char *pValue);
 char* dcitem_get_value(DcItem *pItem);
 
 void stritem_init(StrItem *pItem);
