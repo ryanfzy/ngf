@@ -54,6 +54,30 @@ START_TEST(test_set)
 }
 END_TEST
 
+static void prop_changed_evt(char *pEvtArg)
+{
+    TestData *pt = *(TestData**)pEvtArg;
+    if (pt != NULL)
+        pt->ivalue = 2;
+}
+
+START_TEST(test_set2)
+{
+    TestData t;
+    t.ivalue = 1;
+    StrItem strItem;
+    stritem_init(&strItem);
+    PropertyInfo propInfo;
+    propinfo_init_str(&propInfo, NULL);
+    propinfo_bind(&propInfo, &(strItem.item));
+    TestData *pt = &t;
+    propinfo_sub_changed_evt(&propInfo, prop_changed_evt, (char*)&pt, sizeof(TestData**));
+    ck_assert_int_eq(t.ivalue, 1);
+    stritem_set(&strItem, L"test");
+    ck_assert_int_eq(t.ivalue, 2);
+}
+END_TEST
+
 Suite* make_add_suit(void)
 {
     Suite *s = suite_create("ngf");
@@ -61,6 +85,7 @@ Suite* make_add_suit(void)
     TCase *tc = tcase_create("dcitem");
     tcase_add_test(tc, test_init);
     tcase_add_test(tc, test_set);
+    tcase_add_test(tc, test_set2);
     suite_add_tcase(s, tc);
 
     return s;

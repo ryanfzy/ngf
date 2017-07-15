@@ -127,6 +127,13 @@ char* propinfo_get(PropertyInfo *pInfo)
     return NULL;
 }
 
+static void dcitem_valuechanged_callback(char *pEvtArg)
+{
+    PropertyInfo *pInfo = *((PropertyInfo**)pEvtArg);
+    if (pInfo != NULL)
+        propinfo_raise_changed_evt(pInfo);
+}
+
 void propinfo_bind(PropertyInfo *pInfo, DcItem *pItem)
 {
     if (pInfo != NULL && pItem != NULL)
@@ -138,6 +145,7 @@ void propinfo_bind(PropertyInfo *pInfo, DcItem *pItem)
             pInfo->eType = PropertyType_Binding;
         }
         pInfo->pValue = (char*)pItem;
+        dcitem_sub_changed_evt(pItem, dcitem_valuechanged_callback, (char*)&pInfo, sizeof(PropertyInfo**));
     }
 }
 

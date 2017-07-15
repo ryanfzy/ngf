@@ -22,7 +22,7 @@ static void _dcitem_init(DcItem *pItem, DcItemType eType)
     {
         pItem->eType = eType;
         pItem->pData = NULL;
-        slist_init(&(pItem->observers));
+        evt_init(&(pItem->ValueChangedEvent));
     }
 }
 
@@ -32,28 +32,7 @@ static void _dcitem_destroy(DcItem *pItem)
     {
         free(pItem->pData);
         pItem->pData = NULL;
-        slist_destroy(&(pItem->observers));
-    }
-}
-
-static void _dcitem_add_observer(DcItem *pItem, FrameworkElement *pFe)
-{
-    // only store pointers to fe, not the actual fe
-    if (pItem != NULL && pFe != NULL)
-        slist_push(&(pItem->observers), (char*)&pFe, sizeof(FrameworkElement**));
-}
-
-static void _dcitem_notify(DcItem *pItem)
-{
-    if (pItem != NULL)
-    {
-        int iObservers = slist_get_count(&(pItem->observers));
-        for (int iObserver = 0; iObserver < iObservers; iObserver++)
-        {
-            FrameworkElement **ppFe = (FrameworkElement**)slist_get(&(pItem->observers), iObserver);
-            if (ppFe != NULL)
-                fe_raise_event(*ppFe, EventType_DcItemChanged);
-        }
+        evt_destroy(&(pItem->ValueChangedEvent));
     }
 }
 
@@ -77,7 +56,7 @@ void dcitem_set_value(DcItem *pItem, char *pValue)
             }
             memcpy(pItem->pData, pValue, iSize);
         }
-        _dcitem_notify(pItem);
+        dcitem_raise_changed_evt(pItem);
     }
 }
 
@@ -97,6 +76,18 @@ char* dcitem_get_value(DcItem *pItem)
             return pItem->pData;
     }
     return NULL;
+}
+
+void dcitem_sub_changed_evt(DcItem *pItem, EventCallback fnCallback, char *pEvtArg, size_t iArgSize)
+{
+    if (pItem != NULL)
+        evt_subscribe_ex(&(pItem->ValueChangedEvent), fnCallback, pEvtArg, iArgSize);
+}
+
+void dcitem_raise_changed_evt(DcItem *pItem)
+{
+    if (pItem != NULL)
+        evt_notify(&(pItem->ValueChangedEvent));
 }
 
 void stritem_init(StrItem *pItem)
@@ -124,12 +115,6 @@ wchar_t* stritem_get(StrItem *pItem)
     return NULL;
 }
 
-void stritem_add_observer(StrItem *pItem, FrameworkElement *pFe)
-{
-    if (pItem != NULL)
-        _dcitem_add_observer(&(pItem->item), pFe);
-}
-
 void cmditem_init(CmdItem *pItem)
 {
     if (pItem != NULL)
@@ -153,10 +138,4 @@ CommandFn cmditem_get(CmdItem *pItem)
     if (pItem != NULL)
         return (CommandFn)dcitem_get_value(&(pItem->item));
     return NULL;
-}
-
-void cmditem_add_observer(CmdItem *pItem, FrameworkElement *pFe)
-{
-    if (pItem != NULL)
-        _dcitem_add_observer(&(pItem->item), pFe);
 }
