@@ -126,3 +126,17 @@ FePos textblock_get_pos(FrameworkElement *pFe)
         pos = vinfo_get_pos(&(pInfo->staticInfo.visualInfo));
     return pos;
 }
+
+void tb_sub_textchanged_evt(FrameworkElement *pFe, EventCallback fnCallback, char *pEvtArg, size_t iArgSize)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL)
+        propinfo_sub_changed_evt(&(pInfo->TextProperty), fnCallback, pEvtArg, iArgSize);
+}
+
+void tb_raise_textchanged_evt(FrameworkElement *pFe)
+{
+    TextBlockInfo *pInfo = _tb_getinfo(pFe);
+    if (pInfo != NULL)
+        propinfo_raise_changed_evt(&(pInfo->TextProperty));
+}

@@ -29,4 +29,7 @@ FeSize textblock_get_size(FrameworkElement *pTb);
 void textblock_set_pos(FrameworkElement *pFe, FePos fePos);
 FePos textblock_get_pos(FrameworkElement *pFe);
 
+void tb_sub_textchanged_evt(FrameworkElement *pFe, EventCallback fnCallback, char *pEvtArg, size_t iArgSize);
+void tb_raise_textchanged_evt(FrameworkElement *pFe);
+
 #endif
