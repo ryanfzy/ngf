@@ -7,10 +7,12 @@
 #include <wchar.h>
 #include "types.h"
 #include "dcitem.h"
+#include "evtinfo.h"
 
 typedef struct _propertyInfo
 {
     PropertyType eType;
+    EventInfo PropertyChangedEvent;
     char *pValue;
 } PropertyInfo;
 
@@ -24,5 +26,8 @@ void propinfo_set(PropertyInfo *pInfo, char *pValue);
 char* propinfo_get(PropertyInfo *pInfo);
 
 void propinfo_bind(PropertyInfo *pInfo, DcItem *pItem);
+
+void propinfo_sub_changed_evt(PropertyInfo *pInfo, EventCallback fnCallback, char *pEvtArg, size_t iArgSize);
+void propinfo_raise_changed_evt(PropertyInfo *pInfo);
 
 #endif

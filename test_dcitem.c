@@ -36,6 +36,9 @@ START_TEST(test_set)
     stritem_set(&strItem, L"test2");
     ck_assert_msg(wcscmp(stritem_get(&strItem), L"test2") == 0, "str2 is wrong");
 
+    stritem_set(&strItem, NULL);
+    ck_assert_msg(stritem_get(&strItem) == NULL, "str3 is not NULL");
+
     CmdItem cmdItem;
     cmditem_init(&cmdItem);
     cmditem_set(&cmdItem, test_command);

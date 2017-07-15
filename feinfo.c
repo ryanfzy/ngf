@@ -202,38 +202,28 @@ void cinfo_destroy(ControlInfo *pInfo)
     }
 }
 
-void cinfo_sub_evt(ControlInfo *pInfo, EventType eType, EventCallback fnCallback)
+void cinfo_sub_evt(ControlInfo *pInfo, EventCallback fnCallback, char *pEvtArg, size_t iArgSize)
 {
     if (pInfo != NULL)
-    {
-        if (eType == EventType_Click)
-            evt_subscribe(&(pInfo->ClickEvent), fnCallback);
-    }
+        evt_subscribe_ex(&(pInfo->ClickEvent), fnCallback, pEvtArg, iArgSize);
 }
 
-void cinfo_raise_evt(ControlInfo *pInfo, EventType eType, FrameworkElement *pFe, char *pEvtArg)
+void cinfo_raise_evt(ControlInfo *pInfo)
 {
     if (pInfo != NULL)
-    {
-        if (eType == EventType_Click)
-            evt_notify(&(pInfo->ClickEvent), pFe, pEvtArg);
-    }
+        evt_notify(&(pInfo->ClickEvent));
 }
 
 void sinfo_init(StaticInfo *pInfo)
 {
     if (pInfo != NULL)
-    {
         vinfo_init(&(pInfo->visualInfo));
-    }
 }
 
 void sinfo_destroy(StaticInfo *pInfo)
 {
     if (pInfo != NULL)
-    {
         vinfo_destroy(&(pInfo->visualInfo));
-    }
 }
 
 void dinfo_init(DecoratorInfo *pInfo)

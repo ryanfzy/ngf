@@ -6,10 +6,13 @@
 
 static int _dcitem_get_memsize(DcItemType eType, char *pValue)
 {
-    if (eType == DcItemType_Str)
-        return wstrsize((wchar_t*)pValue);
-    else if (eType == DcItemType_Cmd)
-        return sizeof(Command);
+    if (pValue != NULL)
+    {
+        if (eType == DcItemType_Str)
+            return wstrsize((wchar_t*)pValue);
+        else if (eType == DcItemType_Cmd)
+            return sizeof(Command);
+    }
     return 0;
 }
 

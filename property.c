@@ -21,6 +21,7 @@ void _pinfo_init(PropertyInfo *pInfo, PropertyType eType, char *pValue)
     if (pInfo != NULL)
     {
         pInfo->eType = eType;
+        evt_init(&pInfo->PropertyChangedEvent);
         pInfo->pValue = NULL;
         if (pValue != NULL)
             propinfo_set(pInfo, pValue);
@@ -138,4 +139,16 @@ void propinfo_bind(PropertyInfo *pInfo, DcItem *pItem)
         }
         pInfo->pValue = (char*)pItem;
     }
+}
+
+void propinfo_sub_changed_evt(PropertyInfo *pInfo, EventCallback fnCallback, char *pEvtArg, size_t iArgSize)
+{
+    if (pInfo != NULL)
+        evt_subscribe_ex(&(pInfo->PropertyChangedEvent), fnCallback, pEvtArg, iArgSize);
+}
+
+void propinfo_raise_changed_evt(PropertyInfo *pInfo)
+{
+    if (pInfo != NULL)
+        evt_notify(&(pInfo->PropertyChangedEvent));
 }

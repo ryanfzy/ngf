@@ -79,8 +79,8 @@ FePos vinfo_get_pos(VisualInfo *pInfo);
 
 void cinfo_init(ControlInfo *pInfo);
 void cinfo_destroy(ControlInfo *pInfo);
-void cinfo_sub_evt(ControlInfo *pInfo, EventType eType, EventCallback fnCallback);
-void cinfo_raise_evt(ControlInfo *pInfo, EventType eType, FrameworkElement *pFe, char *pEvtArg);
+void cinfo_sub_evt(ControlInfo *pInfo, EventCallback fnCallback, char *pEvtArg, size_t iArgSize);
+void cinfo_raise_evt(ControlInfo *pInfo);
 
 void sinfo_init(StaticInfo *pInfo);
 void sinfo_destroy(StaticInfo *pInfo);

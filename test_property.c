@@ -12,6 +12,13 @@ typedef struct _TestData
 void test_command(char *pCmdPar){}
 void test_command2(char *pCmdPar){}
 
+void test_evt(char *pEvtArg)
+{
+    TestData *pt = *((TestData**)pEvtArg);
+    if (pt != NULL)
+        pt->ivalue = 2;
+}
+
 START_TEST(test_pr_init)
 {
     PropertyInfo strInfo, strInfo2;
@@ -88,9 +95,9 @@ START_TEST(test_bind)
     propinfo_init_str(&pInfo, NULL);
     StrItem strItem;
     stritem_init(&strItem);
-    propinfo_bind(&pInfo, &(strItem.item));
-
     stritem_set(&strItem, L"test");
+
+    propinfo_bind(&pInfo, &(strItem.item));
     wchar_t *szTest = (wchar_t*)propinfo_get(&pInfo);
     ck_assert_msg(wcscmp(szTest, L"test") == 0, "property is wrong");
 
@@ -109,6 +116,20 @@ START_TEST(test_bind)
 }
 END_TEST
 
+START_TEST(test_event)
+{
+    PropertyInfo info;
+    propinfo_init_str(&info, L"test");
+    TestData t;
+    t.ivalue = 1;
+    TestData *pt = &t;
+    propinfo_sub_changed_evt(&info, test_evt, (char*)&pt, sizeof(TestData*));
+    propinfo_set(&info, (char*)L"test2");
+    propinfo_raise_changed_evt(&info);
+    ck_assert_int_eq(t.ivalue, 2);
+}
+END_TEST
+
 Suite* make_add_suit(void)
 {
     Suite *s = suite_create("ngf");
@@ -117,6 +138,7 @@ Suite* make_add_suit(void)
     tcase_add_test(tc_pr, test_pr_init);
     tcase_add_test(tc_pr, test_pr_set);
     tcase_add_test(tc_pr, test_bind);
+    tcase_add_test(tc_pr, test_event);
     suite_add_tcase(s, tc_pr);
 
     return s;

@@ -12,11 +12,11 @@ static ButtonInfo* _btn_getinfo(FrameworkElement *pBtn)
     return NULL;
 }
 
-static void _btn_click_evt_callback(FrameworkElement *pFe, char *pClickEvtArg)
+static void _btn_click_evt_callback(char *pClickEvtArg)
 {
-    ButtonInfo *pInfo = _btn_getinfo(pFe);
-    if (pInfo != NULL)
+    if (pClickEvtArg != NULL)
     {
+        FrameworkElement *pFe = *((FrameworkElement**)pClickEvtArg);
         CommandFn fnCommand = button_get_command(pFe);
         if (fnCommand != NULL)
             fnCommand(button_get_cmdparameter(pFe));
@@ -28,7 +28,6 @@ static void _btn_init(ButtonInfo *pInfo)
     if (pInfo != NULL)
     {
         cinfo_init(&pInfo->controlInfo);
-        cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, _btn_click_evt_callback);
         propinfo_init_str(&(pInfo->TextProperty), NULL);
         propinfo_init_cmd(&(pInfo->CommandProperty), NULL);
         propinfo_init_ptr(&(pInfo->CommandParameterProperty), NULL);
@@ -52,6 +51,7 @@ FrameworkElement* button_create()
 
     ButtonInfo *pInfo = malloc(sizeof(ButtonInfo));
     _btn_init(pInfo);
+    cinfo_sub_evt(&(pInfo->controlInfo), _btn_click_evt_callback, (char*)&pFe, sizeof(FrameworkElement*));
 
     pFe->pElement = (char*)pInfo;
 
@@ -154,14 +154,14 @@ void btn_sub_click_evt(FrameworkElement *pFe, EventCallback fnCallback)
 {
     ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL)
-        cinfo_sub_evt(&(pInfo->controlInfo), EventType_Click, fnCallback);
+        cinfo_sub_evt(&(pInfo->controlInfo), fnCallback, NULL, 0);
 }
 
 static void _btn_raise_evt(FrameworkElement *pFe, EventType eType, char *pEvtArg)
 {
     ButtonInfo *pInfo = _btn_getinfo(pFe);
     if (pInfo != NULL)
-        cinfo_raise_evt(&(pInfo->controlInfo), eType, pFe, pEvtArg);
+        cinfo_raise_evt(&(pInfo->controlInfo));
 }
 
 void btn_raise_click_evt(FrameworkElement *pFe)
