@@ -1,0 +1,26 @@
+OBJDIR = obj
+BINDIR = bin
+3RD_LIB = ../c_codes
+OBJECTS = $(OBJDIR)/generator.o $(OBJDIR)/xmlparser.o $(OBJDIR)/structs.o $(OBJDIR)/stack.o $(OBJDIR)/list.o
+
+STD_OPTS = -Wall -std=c99 -I..\c_codes\include -c $< -o $@
+
+$(BINDIR)/generator.exe : $(OBJECTS) | $(BINDIR)
+	gcc -Wall -o $@ $(OBJECTS)
+$(OBJDIR)/xmlparser.o : $(3RD_LIB)/xml/xmlparser.c
+	gcc $(STD_OPTS)
+$(OBJDIR)/structs.o : $(3RD_LIB)/containers/structs.c
+	gcc $(STD_OPTS)
+$(OBJDIR)/stack.o : $(3RD_LIB)/containers/stack.c
+	gcc $(STD_OPTS)
+$(OBJDIR)/list.o : $(3RD_LIB)/containers/list.c
+	gcc $(STD_OPTS)
+$(OBJDIR)/generator.o : layout-generator/generator.c
+	gcc $(CHECK_INC) $(STD_OPTS)
+
+$(OBJECTS): | $(OBJDIR)
+$(OBJDIR):
+	mkdir $(OBJDIR)
+
+$(BINDIR):
+	mkdir $(BINDIR)
