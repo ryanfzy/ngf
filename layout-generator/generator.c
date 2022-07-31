@@ -616,9 +616,12 @@ static void _write_add_child_to_file(FILE *f, Tree *parent, Tree *child)
     if (parent != NULL)
     {
         UiComponent *parent_comp = (UiComponent*)tree_get_data(parent);
-        UiComponent *comp = (UiComponent*)tree_get_data(child);
-        char *line = "fe_add_child(%s, %s);\n";
-        fprintf(f, line, parent_comp->name, comp->name);
+        if (parent_comp->type != UiType_Window)
+        {
+            UiComponent *comp = (UiComponent*)tree_get_data(child);
+            char *line = "fe_add_child(%s, %s);\n";
+            fprintf(f, line, parent_comp->name, comp->name);
+        }
     }
 }
 
@@ -780,11 +783,13 @@ static void _write_to_file(Tree *tree, char *file_path)
         return;
     }
     UiWindow *window = (UiWindow*)tree_get_data(tree);
+    Tree *child = tree_get_child(tree, 0);
+    UiComponent *comp = (UiComponent*)tree_get_data(child);
     char *start_line = "FrameworkElement* get_%s_ui(AppDataContext *pDc)\n{\n";
-    char *end_line = "\n}\n";
+    char *end_line = "\nreturn %s;\n}\n";
     fprintf(f, start_line, window->base.name);
-    __write_to_file(f, tree);
-    fprintf(f, end_line);
+    __write_to_file(f, child);
+    fprintf(f, end_line, comp->name);
     fclose(f);
 }
 
