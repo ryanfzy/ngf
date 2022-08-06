@@ -789,8 +789,9 @@ static void _write_impl_file(Tree *tree, char *folder_path)
     FILE *f = fopen(file_path, "w");
     Tree *child = tree_get_child(tree, 0);
     UiComponent *comp = (UiComponent*)tree_get_data(child);
-    char *start_line = "#include \"demo_ui.h\";\nFrameworkElement* get_%s_ui(AppDataContext *pDc)\n{\n";
+    char *start_line = "FrameworkElement* get_%s_ui(AppDataContext *pDc)\n{\n";
     char *end_line = "\nreturn %s;\n}\n";
+    fprintf(f, "#include \"%s_ui.g.h\"\n", window->base.name);
     fprintf(f, start_line, window->base.name);
     __write_to_file(f, child);
     fprintf(f, end_line, comp->name);
