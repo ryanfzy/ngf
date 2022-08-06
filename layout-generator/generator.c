@@ -307,7 +307,10 @@ static UiComponent* create_ui_comp_by_name(char *type_name)
 static void ui_window_set_attr(UiWindow *window, char *key, char *val)
 {
     if (strncmp(key, NAME, sizeof(NAME)) == 0)
+    {
         memcpy(window->base.name, val, strlen(val));
+        window->base.name[strlen(val)] = '\0';
+    }
     else
         printf("Unrecognised window attribute: %s\n", key);
 }
@@ -774,22 +777,46 @@ static void __write_to_file(FILE *f, Tree *tree)
     }
 }
 
-static void _write_to_file(Tree *tree, char *file_path)
+static void _write_impl_file(Tree *tree, char *folder_path)
 {
-    FILE *f = fopen(file_path, "w");
-    if (f == NULL)
-    {
-        printf("Cannot open file: %s\n", file_path);
-        return;
-    }
+    char file_path[256] = {'\0'};
+    memcpy(file_path, folder_path, strlen(folder_path));
     UiWindow *window = (UiWindow*)tree_get_data(tree);
+    char *name = window->base.name;
+    strcat(file_path, "\\");
+    strcat(file_path, name);
+    strcat(file_path, "_ui.g.c");
+    FILE *f = fopen(file_path, "w");
     Tree *child = tree_get_child(tree, 0);
     UiComponent *comp = (UiComponent*)tree_get_data(child);
-    char *start_line = "FrameworkElement* get_%s_ui(AppDataContext *pDc)\n{\n";
+    char *start_line = "#include \"demo_ui.h\";\nFrameworkElement* get_%s_ui(AppDataContext *pDc)\n{\n";
     char *end_line = "\nreturn %s;\n}\n";
     fprintf(f, start_line, window->base.name);
     __write_to_file(f, child);
     fprintf(f, end_line, comp->name);
+    fclose(f);
+}
+
+static void _write_header_file(Tree *tree, char *folder_path)
+{
+    char file_path[256] = {'\0'};
+    memcpy(file_path, folder_path, strlen(folder_path));
+    UiWindow *window = (UiWindow*)tree_get_data(tree);
+    char *name = window->base.name;
+    strcat(file_path, "\\");
+    strcat(file_path, name);
+    strcat(file_path, "_ui.g.h");
+    FILE *f = fopen(file_path, "w");
+    fprintf(f, "#ifndef %sUI_H\n", name);
+    fprintf(f, "#define %sUI_H\n", name);
+    fprintf(f, "#include <stdio.h>\n");
+    fprintf(f, "#include <stdlib.h>\n");
+    fprintf(f, "#include <wchar.h>\n");
+    fprintf(f, "#include \"ngf/zaml_structs.h\"\n");
+    fprintf(f, "#include <wchar.h>\n");
+    fprintf(f, "#include \"%s_datacontext.h\"\n", name);
+    fprintf(f, "FrameworkElement* get_%s_ui(AppDataContext *pDc);\n", name);
+    fprintf(f, "#endif\n");
     fclose(f);
 }
 
@@ -820,6 +847,7 @@ int main(int argc, char *argv[])
     fclose(fp);
     xmlparser_free(parser);
     //_print_tree(ui_tree, 0);
-    _write_to_file(ui_tree, output_path);
+    _write_header_file(ui_tree, output_path);
+    _write_impl_file(ui_tree, output_path);
     return 0;
 }
